@@ -12,9 +12,11 @@ def create_wordlist(input_file, output_file):
                 words = line.strip().split()
                 # Add cleaned words to set
                 for word in words:
-                    # Remove special characters and digits
-                    if not word.isnumeric():
-                        unique_words.add(word)
+                    # Clean word by keeping only letters
+                    cleaned_word = ''.join(char for char in word if char.isalpha())
+                    # Add non-empty words to set
+                    if cleaned_word:
+                        unique_words.add(cleaned_word.lower())
         
         # Write unique words to output file
         with open(output_file, 'w', encoding='utf-8') as f:
