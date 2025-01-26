@@ -1,12 +1,9 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/core"
-    import {
-        CategoryList,
-        GenreOverview,
-        makeRequest,
-        SamplesSearch,
-    } from "$lib/splice/api"
-    import { page } from "$app/state"
+    import { CategoryList, querySplice, SamplesSearch } from "$lib/splice/api"
+    import Waveform from "$lib/components/waveform.svelte"
+    import { fetch } from "@tauri-apps/plugin-http"
+    import pako from "pako"
 
     let name = $state("")
     let greetMsg = $state("")
@@ -14,13 +11,33 @@
     let genres = $state<any>()
     let assets = $state<any>()
 
+    $inspect(genres, assets)
+
     async function greet(event: Event) {
         event.preventDefault()
         // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
         greetMsg = await invoke("greet", { name })
 
-        genres = await makeRequest(CategoryList)
-        assets = await makeRequest(SamplesSearch, { query: name })
+        genres = await querySplice(CategoryList)
+        assets = await querySplice(SamplesSearch, { query: name })
+    }
+
+    async function getWaveform(asset: any) {
+        const url = asset.files.find(
+            (file: any) => (file as any).asset_file_type_slug == "waveform"
+        )?.url
+        if (!url) return []
+        const response = await fetch(url)
+        if (response.headers.get("content-encoding") == "gzip") {
+            const buffer = await response.arrayBuffer()
+            const inflated = pako.inflate(new Uint8Array(buffer), { to: "string" })
+            return JSON.parse(inflated) as [number]
+        }
+        const json = await response.json().catch((e) => {
+            console.error(e)
+            console.log(url)
+        })
+        return json as [number]
     }
 </script>
 
@@ -63,6 +80,9 @@
     {#if assets}
         {#each assets.assetsSearch.items as asset}
             <p>{asset.name}</p>
+            {#await getWaveform(asset) then waveform}
+                <Waveform {waveform} />
+            {/await}
         {/each}
     {/if}
 </main>
