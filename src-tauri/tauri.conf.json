@@ -5,7 +5,7 @@
   "identifier": "de.kosro.splicerr",
   "build": {
     "beforeDevCommand": "pnpm dev",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://localhost:1337",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../build"
   },

@@ -1,25 +1,28 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/core"
     import { CategoryList, querySplice, SamplesSearch } from "$lib/splice/api"
     import Waveform from "$lib/components/waveform.svelte"
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
+    import Badge from "$lib/components/ui/badge/badge.svelte"
 
     let name = $state("")
-    let greetMsg = $state("")
 
     let genres = $state<any>()
     let assets = $state<any>()
 
-    $inspect(genres, assets)
+    $inspect(assets)
 
     async function greet(event: Event) {
         event.preventDefault()
-        // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-        greetMsg = await invoke("greet", { name })
 
         genres = await querySplice(CategoryList)
         assets = await querySplice(SamplesSearch, { query: name })
+    }
+
+    function millisToMinutesAndSeconds(millis: number) {
+        var minutes = Math.floor(millis / 60000)
+        var seconds = Math.floor((millis % 60000) / 1000)
+        return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
     }
 
     async function getWaveform(asset: any) {
@@ -44,30 +47,58 @@
 </script>
 
 <main class="container">
-    <form class="row" onsubmit={greet}>
-        <input
-            id="greet-input"
-            placeholder="Enter a name..."
-            bind:value={name}
-        />
-        <button type="submit">Greet</button>
-    </form>
-    <p>{greetMsg}</p>
-    <div class="flex gap-2">
+    <div class="flex gap-4">
+        <form class="row" onsubmit={greet}>
+            <input
+                id="greet-input"
+                placeholder="Enter a name..."
+                bind:value={name}
+            />
+            <button type="submit">Greet</button>
+        </form>
+        <div class="text-muted-foreground">
+            {#if assets}
+                {assets.assetsSearch.response_metadata.records} Samples found
+            {/if}
+        </div>
+    </div>
+    <div class="flex gap-2 text-muted-foreground py-4">
         {#if genres}
             {#each genres.categories.categories as category}
                 <span>{category.name}</span>
             {/each}
         {/if}
     </div>
-    {#if assets}
-        {#each assets.assetsSearch.items as asset}
-            <div class="flex gap-4">
-                <span class="text-ellipsis max-w-32 min-w-0">{asset.name}</span>
-                {#await getWaveform(asset) then waveform}
-                    <Waveform {waveform} />
-                {/await}
-            </div>
-        {/each}
-    {/if}
+    <div class="flex flex-col gap-4">
+        {#if assets}
+            {#each assets.assetsSearch.items as asset}
+                <div class="flex gap-4 items-center">
+                    <div class="w-64">
+                        <div class="text-ellipsis overflow-clip">
+                            {(asset.name as String).split("/").slice(-1)}
+                        </div>
+                        <div class="flex gap-0.5 flex-wrap text-[0.75rem]">
+                            {#each asset.tags as tag}
+                                <Badge variant="text">{tag.label}</Badge>
+                            {/each}
+                        </div>
+                    </div>
+                    {#await getWaveform(asset)}
+                        <Waveform waveform={[0]} />
+                    {:then waveform}
+                        <Waveform {waveform} />
+                    {/await}
+                    <div class="text-muted-foreground">
+                        {millisToMinutesAndSeconds(asset.duration)}
+                    </div>
+                    <div class="text-muted-foreground">
+                        {asset.key}
+                    </div>
+                    <div class="text-muted-foreground">
+                        {asset.bpm}
+                    </div>
+                </div>
+            {/each}
+        {/if}
+    </div>
 </main>
