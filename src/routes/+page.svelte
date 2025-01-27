@@ -33,7 +33,7 @@
     let assets = $state<any[]>([])
     let response_metadata = $state<any>()
 
-    let topQuery = ""
+    let topVariables: any = null
 
     $effect(() => {
         if (sort in ["random", "popularity", "relevance", "recency"]) {
@@ -59,6 +59,9 @@
 
     const loadAssets = () => {
         const currentVariables = queryVariables
+        if (currentVariables != topVariables) {
+            viewportRef.scrollTo({ top: 0, behavior: "smooth" })
+        }
         loading = true
         querySplice(SamplesSearch, {
             query,
@@ -67,14 +70,13 @@
             page,
         }).then((resp) => {
             if (currentVariables == queryVariables) {
-                if (query == topQuery) {
+                if (currentVariables == topVariables) {
                     assets.push(...resp.assetsSearch.items)
                     console.log("Loaded more assets")
                 } else {
                     assets = resp.assetsSearch.items
-                    topQuery = query
+                    topVariables = queryVariables
                     page = 1
-                    viewportRef.scrollTo({ top: 0, behavior: "smooth" })
                     console.log("Loaded new assets")
                 }
                 response_metadata = resp.assetsSearch.response_metadata
