@@ -1,10 +1,17 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index"
+    import ChevronDown from "lucide-svelte/icons/chevron-down"
+    import { cn } from "$lib/utils"
 
     let {
         sort = $bindable(),
         onselect,
-    }: { sort: string; onselect: CallableFunction } = $props()
+        order,
+    }: {
+        sort: string
+        onselect: CallableFunction
+        order: "ASC" | "DESC"
+    } = $props()
 
     const options = [
         {
@@ -25,7 +32,7 @@
         },
     ]
 
-    const hidden = [
+    const ordered = [
         {
             value: "name",
             label: "Filename",
@@ -44,18 +51,46 @@
         },
     ]
 
-    const triggerContent = $derived(
-        options.find((option) => option.value === sort)?.label ??
-            hidden.find((option) => option.value === sort)?.label ??
-            "Sort by..."
-    )
+    let triggerLabel = $state("")
+    let showOrder = $state(false)
+
+    $effect(() => {
+        const orderedLabel = ordered.find(
+            (option) => option.value === sort
+        )?.label
+        if (orderedLabel) {
+            triggerLabel = orderedLabel
+            showOrder = true
+        } else {
+            triggerLabel =
+                options.find((option) => option.value === sort)?.label ??
+                "Sort by..."
+            showOrder = false
+        }
+    })
 </script>
 
 <Select.Root type="single" bind:value={sort} onValueChange={() => onselect()}>
-    <Select.Trigger class="w-[180px]">{triggerContent}</Select.Trigger>
+    <Select.Trigger class="w-[180px]">
+        <div class="flex items-center">
+            {triggerLabel}
+            {#if showOrder}
+                <ChevronDown
+                    size="18"
+                    class={cn(
+                        "transition-transform ease-in-out",
+                        order == "ASC" ? "rotate-[-180deg]" : ""
+                    )}
+                />
+            {/if}
+        </div>
+    </Select.Trigger>
     <Select.Content>
         <Select.Group>
-            <Select.GroupHeading class="text-xs text-muted-foreground font-normal">Sort by</Select.GroupHeading>
+            <Select.GroupHeading
+                class="text-xs text-muted-foreground font-normal"
+                >Sort by</Select.GroupHeading
+            >
             {#each options as option}
                 <Select.Item value={option.value} label={option.label}
                     >{option.label}</Select.Item

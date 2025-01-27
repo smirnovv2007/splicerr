@@ -35,9 +35,14 @@
 </script>
 
 <div>
-    <div
-        class="flex items-center border-input border px-3 rounded-md w-full"
+    <button
+        class="flex items-center border-input border px-3 rounded-md w-full cursor-text gap-2 ring-offset-background focus-within:ring-ring focus:ring-ring h-9 justify-between whitespace-nowrap bg-transparent py-2 text-sm shadow-sm focus-within:outline-none focus:outline-none focus-within:ring-1 focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
         data-command-input-wrapper=""
+        onmousedown={(e) => {
+            e.preventDefault()
+            inputRef.focus()
+        }}
+        onclick={() => inputRef.focus()}
     >
         <Search class="mr-2 size-4 shrink-0 opacity-50" />
         <input
@@ -95,14 +100,14 @@
                     }
                 )
             }}
-            class="placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            class="select-all placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
         />
-    </div>
+    </button>
     <div class="relative w-full">
-        <div class="absolute top-1 z-10">
+        <div class="absolute top-2 z-20">
             <Card
                 class={cn(
-                    "flex-col rounded-lg p-1 min-w-48",
+                    "flex-col rounded-md p-1 min-w-48",
                     open && suggestions.length > 0 ? "flex" : "hidden"
                 )}
             >

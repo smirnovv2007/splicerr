@@ -21,6 +21,7 @@
     import ChevronDown from "lucide-svelte/icons/chevron-down"
     import { cn } from "$lib/utils"
     import AssetCategorySelect from "$lib/components/asset-category-select.svelte"
+    import BpmSelect from "$lib/components/bpm-select.svelte"
 
     const DEFAULT_SORT = "popularity"
     const PER_PAGE = 50
@@ -30,15 +31,19 @@
 
     let query = $state("")
     let sort = $state(DEFAULT_SORT)
-    let random_seed: string | null = newSeed()
+    let random_seed = $state<string | null>(newSeed())
     let order = $state<"ASC" | "DESC">("DESC")
     let page = $state(1)
     let tags = $state<any[]>([])
     let asset_category_slug = $state<string | null>(null)
+    let bpm = $state<string | null>(null)
+    let min_bpm = $state<number | null>(null)
+    let max_bpm = $state<number | null>(null)
 
     let assets = $state<any[]>([])
     let response_metadata = $state<any>()
     let tag_summary = $state<any>()
+    let total_tag_summary: any
 
     const queryVariables = $derived({
         query,
@@ -47,6 +52,9 @@
         random_seed,
         tags,
         asset_category_slug,
+        bpm,
+        min_bpm,
+        max_bpm,
     })
     let currentQueryVariables: string = ""
 
@@ -91,6 +99,9 @@
             page,
             tags,
             asset_category_slug,
+            bpm: bpm?.toString(),
+            min_bpm,
+            max_bpm,
             limit: PER_PAGE,
         }).then((resp) => {
             const variablesAfterQuery = JSON.stringify(queryVariables)
@@ -109,6 +120,10 @@
                 tagsDrawerRef.style.height =
                     tagsContainerRef.offsetHeight + "px"
                 tag_summary = resp.assetsSearch.tag_summary
+
+                if (!total_tag_summary) {
+                    total_tag_summary = JSON.parse(JSON.stringify(tag_summary))
+                }
 
                 loadingAssets = false
             } else {
@@ -130,6 +145,13 @@
         }
         fetchAssets()
     }
+
+    const updateTagSummary = () =>
+        tag_summary.sort(
+            (a: any, b: any) =>
+                Number(tags.includes(b.tag.uuid)) -
+                    Number(tags.includes(a.tag.uuid))
+        )
 
     const millisToMinutesAndSeconds = (millis: number) => {
         var minutes = Math.floor(millis / 60000)
@@ -159,6 +181,13 @@
         <SearchInput bind:value={query} onsubmit={fetchAssets} />
 
         <div class="flex gap-4 justify-between items-center">
+            <div class="flex-grow"></div>
+            <BpmSelect
+                bind:bpm
+                bind:min_bpm
+                bind:max_bpm
+                onsubmit={fetchAssets}
+            />
             <AssetCategorySelect
                 bind:asset_category_slug
                 onselect={fetchAssets}
@@ -196,6 +225,7 @@
                                             tags.indexOf(tag.tag.uuid),
                                             1
                                         )
+                                        // updateTagSummary()
                                         fetchAssets()
                                     }}
                                     >{tag.tag.label}
@@ -206,6 +236,7 @@
                                     variant="outline"
                                     onclick={() => {
                                         tags.push(tag.tag.uuid)
+                                        // updateTagSummary()
                                         fetchAssets()
                                     }}
                                     >{tag.tag.label}
@@ -239,19 +270,20 @@
 
         <div class="flex justify-between items-end gap-2">
             <div class="text-muted-foreground text-xs flex-grow">
-                {response_metadata?.records || 0} results, showing {assets.length}
+                {(response_metadata?.records as number).toLocaleString() || 0} results
             </div>
             <Button
                 variant="outline"
                 size="icon"
                 onclick={() => {
                     random_seed = newSeed()
+                    sort = "random"
                     fetchAssets()
                 }}
             >
                 <Shuffle />
             </Button>
-            <SortSelect bind:sort onselect={fetchAssets} />
+            <SortSelect bind:sort onselect={fetchAssets} {order} />
         </div>
 
         <div class="flex flex-col gap-2">
@@ -345,7 +377,9 @@
                         <Waveform
                             src={asset.files[1].url}
                             onload={(loading: boolean) => {
-                                waveformsLoading += loading ? 1 : -1
+                                tick().then(() => {
+                                    waveformsLoading += loading ? 1 : -1
+                                })
                             }}
                             class="min-w-32 h-12 flex-grow md:block hidden"
                         />
