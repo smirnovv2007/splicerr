@@ -9,10 +9,11 @@
 <div class={cn("w-full", className)}>
     <div class="w-full overflow-clip relative">
         <Separator />
-        {#if loading}
-            <div
-                class="absolute top-0 animate-progress-loading w-full h-full bg-primary origin-left-right"
-            ></div>
-        {/if}
+        <div
+            class={cn(
+                "absolute top-0 animate-progress-loading w-full h-full bg-primary origin-left-right transition-[opacity] duration-1000",
+                !loading && "opacity-0"
+            )}
+        ></div>
     </div>
 </div>

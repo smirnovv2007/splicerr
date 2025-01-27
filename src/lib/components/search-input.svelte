@@ -105,6 +105,7 @@
     </button>
     <div class="relative w-full">
         <div class="absolute top-2 z-20">
+            <!-- TODO: Use a popover instead -->
             <Card
                 class={cn(
                     "flex-col rounded-md p-1 min-w-48",

@@ -137,12 +137,15 @@
                 open && "hidden"
             )}
         >
-            <span class="text-transparent">{inputText}</span> BPM
+            <span class="text-transparent">{inputText}</span>{inputText
+                ? ""
+                : "Any"} BPM
         </div>
         <ChevronDown class="mr-2 size-4 shrink-0 text-muted-foreground" />
     </button>
     <div class="relative w-full">
         <div class="absolute top-2 z-10 w-full">
+            <!-- TODO: Use a popover instead -->
             <Card
                 bind:ref={cardRef}
                 class={cn("flex-col rounded-md p-1", open ? "flex" : "hidden")}
