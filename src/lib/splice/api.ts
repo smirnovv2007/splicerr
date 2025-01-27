@@ -67,7 +67,7 @@ export const PacksByPermalink = {
 
 export const SoundsSearchAutocomplete = {
     operationName: "SoundsSearchAutocomplete",
-    variables: { term: "yo" },
+    variables: { term: "" },
     query: 'query SoundsSearchAutocomplete($term: String!) {\n  soundsSearchSuggestions(searchTerm: $term, limit: 7, context: "marketplace") {\n    autocompleteUuid\n    results {\n      autocompleteTerm\n      termType\n      length\n      offset\n      __typename\n    }\n    __typename\n  }\n}',
 } as QueryTemplate
 
@@ -81,7 +81,7 @@ export async function querySplice(
     template: QueryTemplate,
     variables: typeof template.variables = {}
 ) {
-    let body = { ...template }
+    const body = { ...template }
     Object.assign(body.variables, variables)
     let response = await fetch(GRAPHQL_URL, {
         method: "POST",
@@ -90,5 +90,11 @@ export async function querySplice(
             "Content-Type": "application/json",
         },
     })
-    return (await response.json()).data
+    if (!response.ok) {
+        console.log(await response.text())
+        return null
+    }
+    const data = (await response.json()).data
+    console.log(data)
+    return data
 }

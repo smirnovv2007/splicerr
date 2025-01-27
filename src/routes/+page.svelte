@@ -4,6 +4,7 @@
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
     import Badge from "$lib/components/ui/badge/badge.svelte"
+    import SearchInput from "$lib/components/search-input.svelte"
 
     let name = $state("")
 
@@ -12,11 +13,14 @@
 
     $inspect(assets)
 
-    async function greet(event: Event) {
-        event.preventDefault()
+    querySplice(CategoryList).then((res) => {
+            genres = res
+        })
 
-        genres = await querySplice(CategoryList)
-        assets = await querySplice(SamplesSearch, { query: name })
+    function search() {
+        querySplice(SamplesSearch, { query: name }).then((res) => {
+            assets = res
+        })
     }
 
     function millisToMinutesAndSeconds(millis: number) {
@@ -26,9 +30,7 @@
     }
 
     async function getWaveform(asset: any) {
-        const url = asset.files.find(
-            (file: any) => (file as any).asset_file_type_slug == "waveform"
-        )?.url
+        const url = asset.files[1].url
         if (!url) return []
         const response = await fetch(url)
         if (response.headers.get("content-encoding") == "gzip") {
@@ -47,15 +49,8 @@
 </script>
 
 <main class="container">
-    <div class="flex gap-4">
-        <form class="row" onsubmit={greet}>
-            <input
-                id="greet-input"
-                placeholder="Enter a name..."
-                bind:value={name}
-            />
-            <button type="submit">Greet</button>
-        </form>
+    <div class="flex gap-4 p-2">
+        <SearchInput bind:value={name} onsubmit={search} />
         <div class="text-muted-foreground">
             {#if assets}
                 {assets.assetsSearch.response_metadata.records} Samples found
@@ -73,13 +68,18 @@
         {#if assets}
             {#each assets.assetsSearch.items as asset}
                 <div class="flex gap-4 items-center">
+                    <img
+                        src={asset.parents.items[0].files[0].url}
+                        alt={asset.name}
+                        class="w-16 h-16 rounded-lg"
+                    />
                     <div class="w-64">
                         <div class="text-ellipsis overflow-clip">
                             {(asset.name as String).split("/").slice(-1)}
                         </div>
                         <div class="flex gap-0.5 flex-wrap text-[0.75rem]">
                             {#each asset.tags as tag}
-                                <Badge variant="text">{tag.label}</Badge>
+                                <Badge variant="ghost">{tag.label}</Badge>
                             {/each}
                         </div>
                     </div>
