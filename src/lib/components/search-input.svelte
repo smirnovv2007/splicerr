@@ -10,12 +10,28 @@
         onsubmit,
     }: { value: string; onsubmit: CallableFunction } = $props()
 
+    let lastSubmittedValue: string
+    let lastSuggestionValue = $state("")
+
     let inputRef = $state<HTMLInputElement>(null!)
 
     let open = $state(false)
     let selectIndex = $state(-1)
 
     let suggestions = $state<any[]>([])
+
+    let timer: number
+    const debounce = (action: CallableFunction, time: number = 200) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            action()
+        }, time)
+    }
+
+    const submit = () => {
+        lastSubmittedValue = value
+        onsubmit()
+    }
 </script>
 
 <div>
@@ -33,7 +49,12 @@
             onkeydown={(e) => {
                 if (e.key === "Enter") {
                     open = false
-                    onsubmit()
+                    if (value !== lastSubmittedValue) {
+                        submit()
+                    }
+                    return
+                } else if (e.key === "Escape") {
+                    open = false
                     return
                 }
                 if (e.key === "ArrowDown") {
@@ -42,11 +63,18 @@
                         suggestions.length - 1
                     )
                 } else if (e.key === "ArrowUp") {
+                    if (selectIndex == -1) {
+                        open = false
+                    }
                     selectIndex = Math.max(selectIndex - 1, -1)
                 }
                 if (e.key == "ArrowUp" || e.key == "ArrowDown") {
                     if (selectIndex >= 0 && selectIndex < suggestions.length) {
                         value = suggestions[selectIndex].autocompleteTerm
+                        if (value !== lastSubmittedValue) {
+                            debounce(submit)
+                        }
+                        open = true
                     }
                     if (suggestions.length > 0) {
                         e.preventDefault()
@@ -55,9 +83,13 @@
             }}
             oninput={() => {
                 selectIndex = -1
+                if (value !== lastSubmittedValue) {
+                    debounce(submit)
+                }
                 querySplice(SoundsSearchAutocomplete, { term: value }).then(
                     (res) => {
                         suggestions = res.soundsSearchSuggestions.results
+                        lastSuggestionValue = value.trim().toLowerCase()
                         inputRef.selectionStart = inputRef.selectionEnd =
                             value.length
                     }
@@ -69,7 +101,7 @@
     <div class="relative w-full">
         <Card
             hidden={!(open && suggestions.length > 0)}
-            class="rounded-lg absolute w-full top-1 p-1 gap-1"
+            class="rounded-lg absolute w-full top-1 p-1 gap-1 z-10"
         >
             {#each suggestions as suggestion, index}
                 <Button
@@ -85,10 +117,17 @@
                     onmousedown={() => {
                         value = suggestion.autocompleteTerm
                         open = false
-                        onsubmit()
+                        submit()
                     }}
                 >
-                    <span>{suggestion.autocompleteTerm}</span>
+                    <span>
+                        <span class="font-bold">{lastSuggestionValue}</span
+                        ><span
+                            >{(suggestion.autocompleteTerm as string).substring(
+                                lastSuggestionValue.length
+                            )}</span
+                        >
+                    </span>
                 </Button>
             {/each}
         </Card>

@@ -23,6 +23,9 @@ importers:
       pako:
         specifier: ^2.1.0
         version: 2.1.0
+      svelte-inview:
+        specifier: ^4.0.4
+        version: 4.0.4(svelte@5.19.3)
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.6
@@ -1094,6 +1097,11 @@ packages:
       svelte: ^4.0.0 || ^5.0.0-next.0
       typescript: '>=5.0.0'
 
+  svelte-inview@4.0.4:
+    resolution: {integrity: sha512-PlXNSHHijvQ6MhmSYUj6cMyS+39NttoTffk7W5WYF8T2tsyLgJnKhyuAF+/hSujbY0vpsmqXaMd2nolEKvR8Kw==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^5.0.0-next
+
   svelte-toolbelt@0.7.0:
     resolution: {integrity: sha512-i/Tv4NwAWWqJnK5H0F8y/ubDnogDYlwwyzKhrspTUFzrFuGnYshqd2g4/R43ds841wmaFiSW/HsdsdWhPOlrAA==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
@@ -2083,6 +2091,10 @@ snapshots:
       typescript: 5.6.3
     transitivePeerDependencies:
       - picomatch
+
+  svelte-inview@4.0.4(svelte@5.19.3):
+    dependencies:
+      svelte: 5.19.3
 
   svelte-toolbelt@0.7.0(svelte@5.19.3):
     dependencies:

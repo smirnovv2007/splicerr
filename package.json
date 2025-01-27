@@ -17,7 +17,8 @@
     "@tauri-apps/plugin-http": "~2",
     "@tauri-apps/plugin-opener": "^2",
     "mode-watcher": "^0.5.1",
-    "pako": "^2.1.0"
+    "pako": "^2.1.0",
+    "svelte-inview": "^4.0.4"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.6",

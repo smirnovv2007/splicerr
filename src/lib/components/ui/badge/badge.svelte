@@ -12,7 +12,7 @@
 					"bg-destructive text-destructive-foreground hover:bg-destructive/80 border-transparent shadow",
 				outline: "text-foreground",
 				ghost:
-				"text-muted-foreground hover:bg-secondary/80 border-transparent",
+				"text-muted-foreground hover:bg-secondary/80 border-transparent hover:text-accent-foreground",
 			},
 		},
 		defaultVariants: {
