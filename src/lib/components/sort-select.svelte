@@ -55,7 +55,7 @@
     <Select.Trigger class="w-[180px]">{triggerContent}</Select.Trigger>
     <Select.Content>
         <Select.Group>
-            <Select.GroupHeading>Sort by</Select.GroupHeading>
+            <Select.GroupHeading class="text-xs text-muted-foreground font-normal">Sort by</Select.GroupHeading>
             {#each options as option}
                 <Select.Item value={option.value} label={option.label}
                     >{option.label}</Select.Item

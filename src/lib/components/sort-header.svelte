@@ -2,7 +2,9 @@
     import { cn } from "$lib/utils.js"
     import ChevronDown from "lucide-svelte/icons/chevron-down"
     import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down"
-    import Button from "$lib/components/ui/button/button.svelte"
+    import Button, {
+        type ButtonProps,
+    } from "$lib/components/ui/button/button.svelte"
 
     let {
         class: className,
@@ -10,12 +12,16 @@
         label,
         sort,
         order,
+        onsort,
+        ...restProps
     }: {
         class?: string
         value: string
         label: string
         sort: string
         order: "ASC" | "DESC"
+        onsort: CallableFunction
+        restProps?: ButtonProps
     } = $props()
 
     const active = $derived(value == sort)
@@ -29,14 +35,16 @@
             "gap-0 p-1",
             active ? "text-primary" : "text-muted-foreground"
         )}
+        onclick={()=> onsort(value)}
+        {...restProps}
     >
         <p>{label}</p>
         {#if active}
             <ChevronDown
                 size="18"
                 class={cn(
-                    "transition-transform ease-in-out fill-primary",
-                    order == "DESC" ? "rotate-180" : ""
+                    "transition-transform ease-in-out",
+                    order == "ASC" ? "rotate-[-180deg]" : ""
                 )}
             />
         {:else}

@@ -83,6 +83,7 @@ export async function querySplice(
 ) {
     const body = { ...template }
     Object.assign(body.variables, variables)
+    const startTime = Date.now()
     console.log("Requesting", body)
     let response = await fetch(GRAPHQL_URL, {
         method: "POST",
@@ -96,6 +97,6 @@ export async function querySplice(
         return null
     }
     const data = (await response.json()).data
-    console.log("Received", data)
+    console.log("Received", data, "after", Date.now() - startTime, "ms")
     return data
 }

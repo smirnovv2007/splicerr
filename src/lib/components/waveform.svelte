@@ -9,12 +9,13 @@
     const GAP = 0.0
     const OVERLAP = 0.1
 
-    const {
+    let {
         src,
         width = 150,
         height = 40,
         class: className,
-    }: { src: URL; width?: number; height?: number; class?: string } = $props()
+        onload,
+    }: { src: URL; width?: number; height?: number; class?: string, onload: CallableFunction } = $props()
 
     const averageToLength = (
         array: number[],
@@ -43,7 +44,9 @@
 
     $effect(() => {
         if (src) {
+            onload(true)
             fetch(src).then((resp) => {
+                onload(false)
                 if (resp.headers.get("content-encoding") == "gzip") {
                     resp.arrayBuffer().then((buff) => {
                         const inflated = pako.inflate(new Uint8Array(buff), {
