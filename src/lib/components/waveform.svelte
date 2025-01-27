@@ -57,8 +57,10 @@
                 ry={rectWidth / 2}
                 width={rectWidth * (1 + OVERLAP)}
                 height={rectHeight}
-                fill="var(--accent)"
-                class={cn(isInView && "transition-[height y] duration-1000")}
+                class={cn(
+                    "fill-muted-foreground",
+                    isInView && "transition-[height y] duration-1000"
+                )}
             />
         {/each}
     </svg>
