@@ -99,37 +99,41 @@
         />
     </div>
     <div class="relative w-full">
-        <Card
-            hidden={!(open && suggestions.length > 0)}
-            class="rounded-lg absolute w-full top-1 p-1 gap-1 z-10"
-        >
-            {#each suggestions as suggestion, index}
-                <Button
-                    class={cn(
-                        "w-full text-left justify-normal font-normal duration-250",
-                        index == selectIndex
-                            ? "bg-accent text-accent-foreground"
-                            : "hover:bg-transparent hover:text-current"
-                    )}
-                    onmousemove={() => (selectIndex = index)}
-                    size="sm"
-                    variant="ghost"
-                    onmousedown={() => {
-                        value = suggestion.autocompleteTerm
-                        open = false
-                        submit()
-                    }}
-                >
-                    <span>
-                        <span class="font-bold">{lastSuggestionValue}</span
-                        ><span
-                            >{(suggestion.autocompleteTerm as string).substring(
-                                lastSuggestionValue.length
-                            )}</span
-                        >
-                    </span>
-                </Button>
-            {/each}
-        </Card>
+        <div class="absolute top-1 z-10">
+            <Card
+                class={cn(
+                    "flex-col rounded-lg p-1 min-w-48",
+                    open && suggestions.length > 0 ? "flex" : "hidden"
+                )}
+            >
+                {#each suggestions as suggestion, index}
+                    <Button
+                        class={cn(
+                            "w-full text-left justify-normal font-normal text-base duration-250",
+                            index == selectIndex
+                                ? "bg-accent text-accent-foreground"
+                                : "hover:bg-transparent hover:text-current"
+                        )}
+                        onmousemove={() => (selectIndex = index)}
+                        size="sm"
+                        variant="ghost"
+                        onmousedown={() => {
+                            value = suggestion.autocompleteTerm
+                            open = false
+                            submit()
+                        }}
+                    >
+                        <span>
+                            <span>{lastSuggestionValue}</span><span
+                                class="text-muted-foreground"
+                                >{(
+                                    suggestion.autocompleteTerm as string
+                                ).substring(lastSuggestionValue.length)}</span
+                            >
+                        </span>
+                    </Button>
+                {/each}
+            </Card>
+        </div>
     </div>
 </div>

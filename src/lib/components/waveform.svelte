@@ -5,6 +5,7 @@
     import { inview } from "svelte-inview"
 
     const WAVEFORM_LENGTH = 800
+    const TARGET_LENGTH = 100
     const GAP = 0.0
     const OVERLAP = 0.1
 
@@ -12,14 +13,30 @@
         src,
         width = 150,
         height = 40,
-    }: { src: URL; width?: number; height?: number } = $props()
+        class: className,
+    }: { src: URL; width?: number; height?: number; class?: string } = $props()
 
-    const everyNth = (arr: any[], nth: number) =>
-        arr.filter((_, i) => i % nth === nth - 1)
+    const averageToLength = (
+        array: number[],
+        targetLength: number
+    ): number[] => {
+        if (array.length === 0) return new Array(targetLength).fill(0)
+        const newArray = new Array(targetLength)
+        const segmentLength = array.length / targetLength
+
+        for (let i = 0; i < targetLength; i++) {
+            const start = Math.floor(i * segmentLength)
+            const end = Math.floor((i + 1) * segmentLength)
+            const segment = array.slice(start, end)
+            newArray[i] = segment.reduce((a, b) => a + b, 0) / segment.length
+        }
+
+        return newArray
+    }
 
     let waveform: number[] = $state(new Array(WAVEFORM_LENGTH).fill(0))
 
-    const reducedWaveform = $derived(everyNth(waveform, 6))
+    const reducedWaveform = $derived(averageToLength(waveform, TARGET_LENGTH))
     const rectWidth = $derived(width / (1 + GAP) / reducedWaveform.length)
 
     let isInView = $state(false)
@@ -46,8 +63,12 @@
     })
 </script>
 
-<div use:inview oninview_change={({ detail }) => (isInView = detail.inView)}>
-    <svg {width} {height}>
+<div
+    use:inview
+    oninview_change={({ detail }) => (isInView = detail.inView)}
+    class={cn(className)}
+>
+    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" class="size-full">
         {#each reducedWaveform as value, i}
             {@const rectHeight = value * height}
             <rect
