@@ -68,6 +68,10 @@
         width: 100%;
     }
 
+    .audio-player-range:focus {
+        outline: none;
+    }
+
     .audio-player-range-track {
         @apply h-1;
         background: linear-gradient(

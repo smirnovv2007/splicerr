@@ -44,7 +44,7 @@
                 >{label}
             </Button>
         </Tooltip.Trigger>
-        <Tooltip.Content class="bg-background text-primary">
+        <Tooltip.Content>
             <p>{count} Samples</p>
         </Tooltip.Content>
     </Tooltip.Root>

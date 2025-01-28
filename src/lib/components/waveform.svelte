@@ -3,9 +3,10 @@
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
     import { inview } from "svelte-inview"
+    import type { MouseEventHandler } from "svelte/elements"
 
     const WAVEFORM_LENGTH = 800
-    const TARGET_LENGTH = 100
+    const TARGET_LENGTH = 50
     const GAP = 0.0
     const OVERLAP = 0.1
 
@@ -15,8 +16,17 @@
         height = 40,
         progress = 0,
         class: className,
+        onclick,
         onload,
-    }: { src: string; width?: number; height?: number; progress?: number, class?: string, onload: CallableFunction } = $props()
+    }: {
+        src: string
+        width?: number
+        height?: number
+        progress?: number
+        class?: string
+        onclick: MouseEventHandler<HTMLButtonElement>
+        onload: CallableFunction
+    } = $props()
 
     const averageToLength = (
         array: number[],
@@ -69,12 +79,17 @@
     })
 </script>
 
-<div
+<button
     use:inview
     oninview_change={({ detail }) => (isInView = detail.inView)}
     class={cn(className)}
+    {onclick}
 >
-    <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" class="size-full">
+    <svg
+        viewBox={`0 0 ${width} ${height}`}
+        preserveAspectRatio="none"
+        class="size-full"
+    >
         {#each reducedWaveform as value, i}
             {@const rectHeight = value * height}
             <rect
@@ -85,10 +100,12 @@
                 width={rectWidth * (1 + OVERLAP)}
                 height={rectHeight}
                 class={cn(
-                    i < progressIndex ? "fill-primary" : "fill-muted-foreground",
-                    isInView && "transition-[height y] duration-1000"
+                    i < progressIndex
+                        ? "fill-primary"
+                        : "fill-muted-foreground",
+                    isInView && "transition-[height,y] duration-1000"
                 )}
             />
         {/each}
     </svg>
-</div>
+</button>

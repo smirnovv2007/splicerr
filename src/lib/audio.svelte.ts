@@ -12,9 +12,10 @@ export const globalAudio = $state({
     toggle() {
         this.paused = !this.paused
     },
-    playAsset(asset: SampleAsset | PackAsset) {
+    playAsset(asset: SampleAsset | PackAsset, from: number = 0) {
         this.currentAsset = asset
         this.ref.src = asset.files[0].url
+        this.ref.currentTime = from
         this.ref.play()
     }
 })

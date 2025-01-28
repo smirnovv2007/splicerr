@@ -26,7 +26,15 @@
     import AudioPlayer from "$lib/components/audio-player.svelte"
     import TagBadge from "$lib/components/tag-badge.svelte"
     import { globalAudio } from "$lib/audio.svelte"
-    import type { AssetSortType, SortOrder, SampleAsset, TagSummaryEntry, SamplesSearchResponse } from "$lib/splice/types"
+    import type {
+        AssetSortType,
+        SortOrder,
+        SampleAsset,
+        TagSummaryEntry,
+        SamplesSearchResponse,
+    } from "$lib/splice/types"
+    import Pause from "lucide-svelte/icons/pause"
+    import * as Tooltip from "$lib/components/ui/tooltip/index.js"
 
     const DEFAULT_SORT = "popularity"
     const PER_PAGE = 50
@@ -112,7 +120,8 @@
             page,
             limit: PER_PAGE,
         }).then((response) => {
-            const searchResult = (response as SamplesSearchResponse).data.assetsSearch
+            const searchResult = (response as SamplesSearchResponse).data
+                .assetsSearch
             const identityAfterFetch = JSON.stringify(queryIdentity)
             if (identityBeforeFetch == identityAfterFetch) {
                 if (identityBeforeFetch == currentQueryIdentity) {
@@ -340,17 +349,25 @@
             {#if assets}
                 {#each assets as asset}
                     {@const pack = asset.parents.items[0]}
+                    {@const selected =
+                        globalAudio.currentAsset?.uuid == asset.uuid}
+                    {@const playing = selected && !globalAudio.paused}
+                    {@const name = asset.name.split("/").slice(-1)}
                     <div class="flex gap-4 items-center justify-between">
                         <PackPreview src={pack.files[0].url} name={pack.name} />
                         <Button
                             variant="ghost"
                             class="group size-12 min-w-12 rounded p-0 [&_svg]:size-6"
-                            onclick={() => {
-                                globalAudio.ref.src = asset.files[0].url
-                                globalAudio.ref.play()
-                            }}
+                            onclick={() =>
+                                playing
+                                    ? globalAudio.ref.pause()
+                                    : globalAudio.playAsset(asset)}
                         >
-                            <Play class="group-hover:block hidden" />
+                            {#if playing}
+                                <Pause class="group-hover:block hidden" />
+                            {:else}
+                                <Play class="group-hover:block hidden" />
+                            {/if}
                             {#if asset.asset_category_slug in assetIcons}
                                 {@const Icon =
                                     assetIcons[asset.asset_category_slug]}
@@ -365,11 +382,18 @@
                             <div
                                 class="relative after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:to-background after:pointer-events-none"
                             >
-                                <div class="overflow-clip">
-                                    {(asset.name as String)
-                                        .split("/")
-                                        .slice(-1)}
-                                </div>
+                                <Tooltip.Provider>
+                                    <Tooltip.Root>
+                                        <Tooltip.Trigger
+                                            class="overflow-clip cursor-default"
+                                        >
+                                            {name}
+                                        </Tooltip.Trigger>
+                                        <Tooltip.Content>
+                                            {name}
+                                        </Tooltip.Content>
+                                    </Tooltip.Root>
+                                </Tooltip.Provider>
                                 <div
                                     class="flex gap-0.5 text-xs overflow-clip text-nowrap"
                                 >
@@ -401,9 +425,16 @@
                         </div>
                         <Waveform
                             src={asset.files[1].url}
-                            progress={globalAudio.ref.src == asset.files[0].url
-                                ? globalAudio.progress()
-                                : 0}
+                            progress={selected ? globalAudio.progress() : 0}
+                            onclick={(event) => {
+                                const rect =
+                                    event.currentTarget.getBoundingClientRect()
+                                const clickPosition =
+                                    (event.clientX - rect.left) / rect.width
+                                const startTime =
+                                    clickPosition * (asset.duration / 1000)
+                                globalAudio.playAsset(asset, startTime)
+                            }}
                             onload={(loading: boolean) => {
                                 tick().then(() => {
                                     waveformsLoading += loading ? 1 : -1
