@@ -313,13 +313,14 @@
                     onsort={updateSort}
                     class="min-w-32 w-96 flex-[3_1_auto]"
                 />
+                <div class="min-w-32 w-[150px] flex-grow md:block hidden"></div>
                 <SortHeader
                     value="duration"
                     label="Time"
                     {sort}
                     {order}
                     onsort={updateSort}
-                    class="min-w-14 w-14"
+                    class="min-w-14 w-14 flex-grow"
                 />
                 <SortHeader
                     value="key"
@@ -327,7 +328,7 @@
                     {sort}
                     {order}
                     onsort={updateSort}
-                    class="min-w-14 w-14"
+                    class="min-w-14 w-14 flex-grow"
                 />
                 <SortHeader
                     value="bpm"
@@ -335,7 +336,7 @@
                     {sort}
                     {order}
                     onsort={updateSort}
-                    class="min-w-14 w-14"
+                    class="min-w-14 w-14 flex-grow"
                 />
             </div>
             <ProgressLoading loading={loadingAssets || waveformsLoading > 0} />
@@ -345,7 +346,7 @@
         class="container flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
     >
-        <div class="flex flex-col py-4 gap-4 size-full">
+        <div class="flex flex-col py-2 size-full">
             {#if assets}
                 {#each assets as asset}
                     {@const pack = asset.parents.items[0]}
@@ -353,7 +354,12 @@
                         globalAudio.currentAsset?.uuid == asset.uuid}
                     {@const playing = selected && !globalAudio.paused}
                     {@const name = asset.name.split("/").slice(-1)}
-                    <div class="flex gap-4 items-center justify-between">
+                    <div
+                        class={cn(
+                            "flex gap-4 items-center justify-between p-1 rounded-lg",
+                            selected && "bg-muted"
+                        )}
+                    >
                         <PackPreview src={pack.files[0].url} name={pack.name} />
                         <Button
                             variant="ghost"
@@ -364,23 +370,28 @@
                                     : globalAudio.playAsset(asset)}
                         >
                             {#if playing}
-                                <Pause class="group-hover:block hidden" />
+                                <Pause />
                             {:else}
                                 <Play class="group-hover:block hidden" />
-                            {/if}
-                            {#if asset.asset_category_slug in assetIcons}
-                                {@const Icon =
-                                    assetIcons[asset.asset_category_slug]}
-                                <Icon class="group-hover:hidden" />
-                            {:else}
-                                <CircleX class="group-hover:hidden" />
+                                {#if asset.asset_category_slug in assetIcons}
+                                    {@const Icon =
+                                        assetIcons[asset.asset_category_slug]}
+                                    <Icon class="group-hover:hidden" />
+                                {:else}
+                                    <CircleX class="group-hover:hidden" />
+                                {/if}
                             {/if}
                         </Button>
                         <div
                             class="min-w-32 w-96 flex-[3_1_auto] overflow-clip"
                         >
                             <div
-                                class="relative after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:to-background after:pointer-events-none"
+                                class={cn(
+                                    "relative after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:pointer-events-none",
+                                    selected
+                                        ? " after:to-muted"
+                                        : "after:to-background"
+                                )}
                             >
                                 <Tooltip.Provider>
                                     <Tooltip.Root>
@@ -440,7 +451,7 @@
                                     waveformsLoading += loading ? 1 : -1
                                 })
                             }}
-                            class="min-w-32 h-12 flex-grow md:block hidden"
+                            class="min-w-32 w-[150px] h-12 flex-grow md:block hidden"
                         />
                         <div
                             class="text-muted-foreground min-w-14 w-14 flex-grow"
@@ -478,5 +489,22 @@
             {/if}
         </div>
     </ScrollArea>
-    <AudioPlayer />
+    <AudioPlayer
+        onprev={() => {
+            const currentIndex = assets.findIndex(
+                (asset) => asset.uuid === globalAudio.currentAsset?.uuid
+            )
+            if (currentIndex !== -1 && currentIndex - 1 >= 0) {
+                globalAudio.playAsset(assets[currentIndex - 1])
+            }
+        }}
+        onnext={() => {
+            const currentIndex = assets.findIndex(
+                (asset) => asset.uuid === globalAudio.currentAsset?.uuid
+            )
+            if (currentIndex !== -1 && currentIndex + 1 < assets.length) {
+                globalAudio.playAsset(assets[currentIndex + 1])
+            }
+        }}
+    />
 </main>

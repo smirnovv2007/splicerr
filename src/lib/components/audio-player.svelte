@@ -7,12 +7,17 @@
     import SkipForward from "lucide-svelte/icons/skip-forward"
     import SkipBack from "lucide-svelte/icons/skip-back"
     import { globalAudio } from "$lib/audio.svelte"
+    import type { MouseEventHandler } from "svelte/elements"
 
     let {
         class: className,
+        onnext,
+        onprev,
         ...restProps
     }: {
         class?: string
+        onnext: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
+        onprev: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
     } = $props()
 
     onMount(() => {
@@ -40,8 +45,14 @@
     />
     <div class="flex items-center justify-between p-1">
         <div class="flex gap-1">
-            <Button variant="ghost" size="icon"><SkipBack /></Button>
             <Button
+                class="[&_svg]:size-5"
+                variant="ghost"
+                size="icon"
+                onclick={onprev}><SkipBack /></Button
+            >
+            <Button
+                class="[&_svg]:size-5"
                 variant="ghost"
                 size="icon"
                 onclick={() => globalAudio.toggle()}
@@ -52,7 +63,12 @@
                     <Pause />
                 {/if}
             </Button>
-            <Button variant="ghost" size="icon"><SkipForward /></Button>
+            <Button
+                class="[&_svg]:size-5"
+                variant="ghost"
+                size="icon"
+                onclick={onnext}><SkipForward /></Button
+            >
         </div>
         <div>Asset info here</div>
         <div>Volume slider here</div>
