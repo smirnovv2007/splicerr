@@ -1,4 +1,4 @@
-import type { PackAsset, SampleAsset } from "./splice/types"
+import type { PackAsset, SampleAsset } from "../splice/types"
 
 export const globalAudio = $state({
     ref: null! as HTMLAudioElement,

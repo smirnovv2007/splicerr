@@ -6,7 +6,7 @@
     import Pause from "lucide-svelte/icons/pause"
     import SkipForward from "lucide-svelte/icons/skip-forward"
     import SkipBack from "lucide-svelte/icons/skip-back"
-    import { globalAudio } from "$lib/audio.svelte"
+    import { globalAudio } from "$lib/shared/audio.svelte"
     import type { MouseEventHandler } from "svelte/elements"
 
     let {
