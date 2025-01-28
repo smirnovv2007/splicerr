@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { uid } from "$lib/shared/uid"
     import { cn } from "$lib/utils"
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
@@ -6,52 +7,24 @@
     import type { MouseEventHandler } from "svelte/elements"
 
     const WAVEFORM_LENGTH = 800
-    const TARGET_LENGTH = 50
-    const GAP = 0.0
-    const OVERLAP = 0.1
+
+    const key = `progress-gradient-${uid()}`
 
     let {
         src,
-        width = 150,
-        height = 40,
         progress = 0,
         class: className,
         onclick,
         onload,
     }: {
         src: string
-        width?: number
-        height?: number
         progress?: number
         class?: string
         onclick: MouseEventHandler<HTMLButtonElement>
         onload: CallableFunction
     } = $props()
 
-    const averageToLength = (
-        array: number[],
-        targetLength: number
-    ): number[] => {
-        if (array.length === 0) return new Array(targetLength).fill(0)
-        const newArray = new Array(targetLength)
-        const segmentLength = array.length / targetLength
-
-        for (let i = 0; i < targetLength; i++) {
-            const start = Math.floor(i * segmentLength)
-            const end = Math.floor((i + 1) * segmentLength)
-            const segment = array.slice(start, end)
-            newArray[i] = segment.reduce((a, b) => a + b, 0) / segment.length
-        }
-
-        return newArray
-    }
-
     let waveform: number[] = $state(new Array(WAVEFORM_LENGTH).fill(0))
-
-    const reducedWaveform = $derived(averageToLength(waveform, TARGET_LENGTH))
-    const rectWidth = $derived(width / (1 + GAP) / reducedWaveform.length)
-
-    let progressIndex = $derived(Math.floor(reducedWaveform.length * progress))
 
     let isInView = $state(false)
 
@@ -77,6 +50,33 @@
             waveform = new Array(WAVEFORM_LENGTH).fill(0)
         }
     })
+
+    // Function to generate the SVG path for the waveform
+    function generateWaveformPath(data: number[]) {
+        const pathData = []
+        const width = 1000 // Total width of the SVG
+        const height = 200 // Total height of the SVG
+        const midHeight = height / 2
+        const step = width / data.length // Horizontal step size for each data point
+
+        // Top half of the waveform
+        pathData.push(`M 0 ${midHeight}`)
+        data.forEach((value, index) => {
+            const x = index * step
+            const y = midHeight - value * midHeight // Flip vertically
+            pathData.push(`L ${x} ${y}`)
+        })
+
+        // Bottom half (mirrored) of the waveform
+        for (let i = data.length - 1; i >= 0; i--) {
+            const x = i * step
+            const y = midHeight + data[i] * midHeight
+            pathData.push(`L ${x} ${y}`)
+        }
+
+        pathData.push("Z") // Close the path
+        return pathData.join(" ")
+    }
 </script>
 
 <button
@@ -84,28 +84,21 @@
     oninview_change={({ detail }) => (isInView = detail.inView)}
     class={cn(className)}
     {onclick}
+    aria-label="Waveform"
 >
-    <svg
-        viewBox={`0 0 ${width} ${height}`}
-        preserveAspectRatio="none"
-        class="size-full"
-    >
-        {#each reducedWaveform as value, i}
-            {@const rectHeight = value * height}
-            <rect
-                x={rectWidth * i * (1 + GAP)}
-                y={(height - rectHeight) / 2}
-                rx={rectWidth / 2}
-                ry={rectWidth / 2}
-                width={rectWidth * (1 + OVERLAP)}
-                height={rectHeight}
-                class={cn(
-                    i < progressIndex
-                        ? "fill-primary"
-                        : "fill-muted-foreground",
-                    isInView && "transition-[height,y] duration-1000"
-                )}
-            />
-        {/each}
+    <svg class="size-full" viewBox={`0 0 1000 200`} preserveAspectRatio="none">
+        <defs>
+            <linearGradient id={key} x1="0" y1="0" x2="1" y2="0">
+                <stop
+                    offset={`${progress * 100}%`}
+                    stop-color="hsl(var(--primary))"
+                />
+                <stop
+                    offset={`${progress * 100}%`}
+                    stop-color="hsl(var(--muted-foreground))"
+                />
+            </linearGradient>
+        </defs>
+        <path d={generateWaveformPath(waveform)} fill={`url(#${key})`} />
     </svg>
 </button>

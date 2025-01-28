@@ -1,5 +1,5 @@
 <script lang="ts">
-    import SampleListEntry from "./SampleListEntry.svelte"
+    import SampleListEntry from "./sample-list-entry.svelte"
     import SearchInput from "$lib/components/search-input.svelte"
     import { ScrollArea } from "$lib/components/ui/scroll-area"
     import { onMount, tick } from "svelte"
