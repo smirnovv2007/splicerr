@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { querySplice, SoundsSearchAutocomplete } from "$lib/splice/api"
+    import { querySplice, SoundsSearchAutocomplete, type AutocompleteSuggestion, type SoundsSearchAutocompleteResponse } from "$lib/splice/api"
     import Search from "lucide-svelte/icons/search"
     import { Card } from "$lib/components/ui/card"
     import { Button } from "$lib/components/ui/button"
@@ -8,17 +8,22 @@
     let {
         value = $bindable(),
         onsubmit,
-    }: { value: string; onsubmit: CallableFunction } = $props()
+        class: className,
+        inputRef = $bindable(null!),
+    }: {
+        value: string
+        onsubmit: CallableFunction
+        class?: string
+        inputRef?: HTMLInputElement
+    } = $props()
 
     let lastSubmittedValue: string
     let lastSuggestionValue = $state("")
 
-    let inputRef = $state<HTMLInputElement>(null!)
-
     let open = $state(false)
     let selectIndex = $state(-1)
 
-    let suggestions = $state<any[]>([])
+    let suggestions = $state<AutocompleteSuggestion[]>([])
 
     let timer: number
     const debounce = (action: CallableFunction, time: number = 200) => {
@@ -34,9 +39,12 @@
     }
 </script>
 
-<div>
+<div class={className}>
     <button
-        class="flex items-center border-input border px-3 rounded-md w-full cursor-text gap-2 ring-offset-background focus-within:ring-ring focus:ring-ring h-9 justify-between whitespace-nowrap bg-transparent py-2 text-sm shadow-sm focus-within:outline-none focus:outline-none focus-within:ring-1 focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
+        class={cn(
+            "flex items-center border-input border px-3 rounded-md w-full cursor-text gap-2 ring-offset-background focus-within:ring-ring focus:ring-ring h-9 justify-between whitespace-nowrap bg-transparent py-2 text-sm shadow-sm focus-within:outline-none focus:outline-none focus-within:ring-1 focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
+            className
+        )}
         data-command-input-wrapper=""
         onmousedown={(e) => {
             e.preventDefault()
@@ -92,8 +100,8 @@
                     debounce(submit)
                 }
                 querySplice(SoundsSearchAutocomplete, { term: value }).then(
-                    (res) => {
-                        suggestions = res.soundsSearchSuggestions.results
+                    (data) => {
+                        suggestions = (data as SoundsSearchAutocompleteResponse).data.soundsSearchSuggestions.results
                         lastSuggestionValue = value.trim().toLowerCase()
                         inputRef.selectionStart = inputRef.selectionEnd =
                             value.length

@@ -13,9 +13,10 @@
         src,
         width = 150,
         height = 40,
+        progress = 0,
         class: className,
         onload,
-    }: { src: URL; width?: number; height?: number; class?: string, onload: CallableFunction } = $props()
+    }: { src: string; width?: number; height?: number; progress?: number, class?: string, onload: CallableFunction } = $props()
 
     const averageToLength = (
         array: number[],
@@ -39,6 +40,8 @@
 
     const reducedWaveform = $derived(averageToLength(waveform, TARGET_LENGTH))
     const rectWidth = $derived(width / (1 + GAP) / reducedWaveform.length)
+
+    let progressIndex = $derived(Math.floor(reducedWaveform.length * progress))
 
     let isInView = $state(false)
 
@@ -82,7 +85,7 @@
                 width={rectWidth * (1 + OVERLAP)}
                 height={rectHeight}
                 class={cn(
-                    "fill-muted-foreground",
+                    i < progressIndex ? "fill-primary" : "fill-muted-foreground",
                     isInView && "transition-[height y] duration-1000"
                 )}
             />

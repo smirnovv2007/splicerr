@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { querySplice, SamplesSearch } from "$lib/splice/api"
+    import { querySplice, SamplesSearch, type AssetTag, type SampleAsset, type SamplesSearchResponse } from "$lib/splice/api"
     import Waveform from "$lib/components/waveform.svelte"
     import SearchInput from "$lib/components/search-input.svelte"
     import { ScrollArea } from "$lib/components/ui/scroll-area"
@@ -7,9 +7,11 @@
     import SortSelect from "$lib/components/sort-select.svelte"
     import AudioLines from "lucide-svelte/icons/audio-lines"
     import Repeat from "lucide-svelte/icons/repeat"
+    import Search from "lucide-svelte/icons/search"
     import Settings2 from "lucide-svelte/icons/settings-2"
     import DiscAlbum from "lucide-svelte/icons/disc-album"
     import CircleX from "lucide-svelte/icons/circle-x"
+    import Smile from "lucide-svelte/icons/smile"
     import Play from "lucide-svelte/icons/play"
     import Shuffle from "lucide-svelte/icons/shuffle"
     import Button from "$lib/components/ui/button/button.svelte"
@@ -21,6 +23,9 @@
     import { cn } from "$lib/utils"
     import AssetCategorySelect from "$lib/components/asset-category-select.svelte"
     import BpmSelect from "$lib/components/bpm-select.svelte"
+    import AudioPlayer from "$lib/components/audio-player.svelte"
+    import TagBadge from "$lib/components/tag-badge.svelte"
+    import { globalAudio } from "$lib/audio.svelte"
 
     const DEFAULT_SORT = "popularity"
     const PER_PAGE = 50
@@ -33,15 +38,24 @@
     let random_seed = $state<string | null>(newSeed())
     let order = $state<"ASC" | "DESC">("DESC")
     let page = $state(1)
-    let tags = $state<any[]>([])
+    let tags = $state<string[]>([])
     let asset_category_slug = $state<string | null>(null)
     let bpm = $state<string | null>(null)
     let min_bpm = $state<number | null>(null)
     let max_bpm = $state<number | null>(null)
 
-    let assets = $state<any[]>([])
+    let assets = $state<SampleAsset[]>([])
     let response_metadata = $state<any>()
     let tag_summary = $state<any>()
+
+    // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
+    const instrumentTags = $derived(() =>
+        tag_summary.filter((tag: any) => tag.tag.taxonomy.name == "Instrument")
+    )
+
+    const genreTags = $derived(() =>
+        tag_summary.filter((tag: any) => tag.tag.taxonomy.name == "Genre")
+    )
 
     $effect(() => {
         if (sort in ["random", "popularity", "relevance", "recency"]) {
@@ -51,12 +65,15 @@
 
     let loadingAssets = $state(false)
     let waveformsLoading = $state(0)
+    let beforeFirstLoad = $state(true)
 
     let expandTags = $state(false)
 
     let viewportRef = $state<HTMLElement>(null!)
     let tagsContainerRef = $state<HTMLElement>(null!)
     let tagsDrawerRef = $state<HTMLElement>(null!)
+
+    let searchInputRef = $state<HTMLInputElement>(null!)
 
     const assetIcons: { [index: string]: any } = {
         oneshot: AudioLines,
@@ -85,7 +102,6 @@
 
     const fetchAssets = () => {
         const identityBeforeFetch = JSON.stringify(queryIdentity)
-        console.log("Fetching assets", identityBeforeFetch)
         if (identityBeforeFetch != currentQueryIdentity) {
             viewportRef.scrollTo({ top: 0, behavior: "smooth" })
         }
@@ -94,25 +110,27 @@
             ...queryIdentity,
             page,
             limit: PER_PAGE,
-        }).then((resp) => {
+        }).then((data) => {
+            const searchResult = (data as SamplesSearchResponse).data.assetsSearch
             const identityAfterFetch = JSON.stringify(queryIdentity)
             if (identityBeforeFetch == identityAfterFetch) {
                 if (identityBeforeFetch == currentQueryIdentity) {
-                    assets.push(...resp.assetsSearch.items)
+                    assets.push(...searchResult.items)
                     console.log("Loaded more assets")
                 } else {
-                    assets = resp.assetsSearch.items
+                    assets = searchResult.items
                     currentQueryIdentity = identityAfterFetch
                     page = 1
                     console.log("Loaded new assets")
                 }
-                response_metadata = resp.assetsSearch.response_metadata
+                response_metadata = searchResult.response_metadata
 
                 tagsDrawerRef.style.height =
                     tagsContainerRef.offsetHeight + "px"
-                tag_summary = resp.assetsSearch.tag_summary
+                tag_summary = searchResult.tag_summary
 
                 loadingAssets = false
+                beforeFirstLoad = false
             } else {
                 console.log("Query changed, ignoring response")
             }
@@ -159,16 +177,21 @@
             }
         })
 
+        searchInputRef.focus()
+
         fetchAssets()
     })
 </script>
 
 <main class="flex flex-col size-full">
     <div class="container flex flex-col pt-4 gap-4">
-        <SearchInput bind:value={query} onsubmit={fetchAssets} />
-
         <div class="flex gap-4 justify-between items-center">
-            <div class="flex-grow"></div>
+            <SearchInput
+                bind:value={query}
+                onsubmit={fetchAssets}
+                class="flex-grow"
+                bind:inputRef={searchInputRef}
+            />
             <BpmSelect
                 bind:bpm
                 bind:min_bpm
@@ -203,32 +226,24 @@
                         )}
                     >
                         {#each tag_summary as tag}
-                            {#if tags.includes(tag.tag.uuid)}
-                                <Button
-                                    class="px-2 min-w-14 h-6 justify-center shrink-0"
-                                    variant="default"
-                                    onclick={() => {
+                            {@const active = tags.includes(tag.tag.uuid)}
+                            <TagBadge
+                                label={tag.tag.label}
+                                count={tag.count}
+                                {active}
+                                onclick={() => {
+                                    if (active) {
                                         tags.splice(
                                             tags.indexOf(tag.tag.uuid),
                                             1
                                         )
-                                        // updateTagSummary()
-                                        fetchAssets()
-                                    }}
-                                    >{tag.tag.label}
-                                </Button>
-                            {:else}
-                                <Button
-                                    class="px-2 min-w-14 h-6 justify-center text-muted-foreground shrink-0"
-                                    variant="outline"
-                                    onclick={() => {
+                                    } else {
                                         tags.push(tag.tag.uuid)
-                                        // updateTagSummary()
-                                        fetchAssets()
-                                    }}
-                                    >{tag.tag.label}
-                                </Button>
-                            {/if}
+                                    }
+                                    // updateTagSummary()
+                                    fetchAssets()
+                                }}
+                            />
                         {/each}
                     </div>
                 </div>
@@ -317,10 +332,10 @@
         </div>
     </div>
     <ScrollArea
-        class="container before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none"
+        class="container flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
     >
-        <div class="flex flex-col py-4 gap-4">
+        <div class="flex flex-col py-4 gap-4 size-full">
             {#if assets}
                 {#each assets as asset}
                     {@const pack = asset.parents.items[0]}
@@ -329,6 +344,10 @@
                         <Button
                             variant="ghost"
                             class="group size-12 min-w-12 rounded p-0 [&_svg]:size-6"
+                            onclick={() => {
+                                globalAudio.ref.src = asset.files[0].url
+                                globalAudio.ref.play()
+                            }}
                         >
                             <Play class="group-hover:block hidden" />
                             {#if asset.asset_category_slug in assetIcons}
@@ -354,24 +373,36 @@
                                     class="flex gap-0.5 text-xs overflow-clip text-nowrap"
                                 >
                                     {#each asset.tags as tag}
-                                        <Button
+                                        {@const active = tags.includes(
+                                            tag.uuid
+                                        )}
+                                        {@const tag_summary_tag =
+                                            tag_summary.find(
+                                                (t: any) =>
+                                                    t.tag.uuid == tag.uuid
+                                            )}
+                                        <TagBadge
+                                            label={tag.label}
                                             variant="ghost"
-                                            size="sm"
-                                            class="px-1 py-0.5 h-auto text-muted-foreground hover:bg-secondary/80 border-transparent hover:text-accent-foreground"
+                                            class="px-1 py-0.5 h-auto"
+                                            count={tag_summary_tag.count}
                                             onclick={() => {
-                                                if (!tags.includes(tag.uuid)) {
+                                                if (!active) {
                                                     tags.push(tag.uuid)
                                                     // updateTagSummary()
                                                     fetchAssets()
                                                 }
-                                            }}>{tag.label}</Button
-                                        >
+                                            }}
+                                        />
                                     {/each}
                                 </div>
                             </div>
                         </div>
                         <Waveform
                             src={asset.files[1].url}
+                            progress={globalAudio.ref.src == asset.files[1].url
+                                ? globalAudio.progress()
+                                : 0}
                             onload={(loading: boolean) => {
                                 tick().then(() => {
                                     waveformsLoading += loading ? 1 : -1
@@ -395,8 +426,25 @@
                             {asset.bpm || "--"}
                         </div>
                     </div>
+                {:else}
+                    <div
+                        class="flex flex-col gap-2 justify-center items-center size-full text-muted-foreground"
+                    >
+                        {#if beforeFirstLoad}
+                            <Smile size="48" />
+                            <p class="font-bold text-xl">Hey there!</p>
+                            <p class="text-sm">
+                                Make some cool music, will ya?
+                            </p>
+                        {:else}
+                            <Search size="48" />
+                            <p class="font-bold text-xl">No results</p>
+                            <p class="text-sm">Try different keywords</p>
+                        {/if}
+                    </div>
                 {/each}
             {/if}
         </div>
     </ScrollArea>
+    <AudioPlayer />
 </main>

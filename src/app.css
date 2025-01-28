@@ -67,10 +67,10 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border select-none;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden h-screen;
   }
 }
 
@@ -79,14 +79,4 @@
     font-family: Inter;
     src: url('/InterVariable.woff2') format('woff2');
   }
-}
-
-html,
-body {
-    overflow: hidden;
-    height: 100vh;
-}
-
-* {
-    user-select: none;
 }

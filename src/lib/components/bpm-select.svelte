@@ -110,7 +110,7 @@
             onblur={handleBlur}
             oninput={handleInput}
             onkeydown={(e) => {
-                if (e.key === "Escape") {
+                if (e.key === "Escape" || e.key === "Enter") {
                     open = false
                     return
                 }
