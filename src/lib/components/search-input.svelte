@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { querySplice, SoundsSearchAutocomplete, type AutocompleteSuggestion, type SoundsSearchAutocompleteResponse } from "$lib/splice/api"
+    import { querySplice, SoundsSearchAutocomplete} from "$lib/splice/api"
     import Search from "lucide-svelte/icons/search"
     import { Card } from "$lib/components/ui/card"
     import { Button } from "$lib/components/ui/button"
     import { cn } from "$lib/utils"
+    import type { AutocompleteSuggestion, SoundsSearchAutocompleteResponse } from "$lib/splice/types"
 
     let {
         value = $bindable(),
@@ -100,8 +101,8 @@
                     debounce(submit)
                 }
                 querySplice(SoundsSearchAutocomplete, { term: value }).then(
-                    (data) => {
-                        suggestions = (data as SoundsSearchAutocompleteResponse).data.soundsSearchSuggestions.results
+                    (response) => {
+                        suggestions = (response as SoundsSearchAutocompleteResponse).data.soundsSearchSuggestions.results
                         lastSuggestionValue = value.trim().toLowerCase()
                         inputRef.selectionStart = inputRef.selectionEnd =
                             value.length

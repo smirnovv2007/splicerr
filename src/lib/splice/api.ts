@@ -71,108 +71,6 @@ export const SoundsSearchAutocomplete = {
     query: 'query SoundsSearchAutocomplete($term: String!) {\n  soundsSearchSuggestions(searchTerm: $term, limit: 7, context: "marketplace") {\n    autocompleteUuid\n    results {\n      autocompleteTerm\n      termType\n      length\n      offset\n      __typename\n    }\n    __typename\n  }\n}',
 }
 
-// --------------------------- TYPES -----------------------------
-
-export type SamplesSearchResponse = {
-    data: {
-        assetsSearch: {
-            items: Array<SampleAsset>
-            __typename: string
-            tag_summary: Array<{
-                count: number
-                tag: {
-                    uuid: string
-                    label: string
-                    taxonomy: {
-                        uuid: string
-                        name: string
-                        __typename: string
-                    }
-                    __typename: string
-                }
-                __typename: string
-            }>
-            pagination_metadata: {
-                currentPage: number
-                totalPages: number
-                __typename: string
-            }
-            response_metadata: {
-                records: number
-                __typename: string
-            }
-        }
-    }
-}
-
-export type AssetPrice = {
-    amount: number
-    currency: string
-    __typename: string
-}
-
-export type AssetTag = {
-    uuid: string
-    label: string
-    __typename: string
-}
-
-export type AssetFile = {
-    uuid: string
-    name?: string
-    hash?: string
-    path: string
-    asset_file_type_slug: string
-    url: string
-    __typename: string
-}
-
-export type SampleAsset = {
-    asset_type_slug: string
-    asset_prices: Array<AssetPrice>
-    uuid: string
-    name: string
-    tags: Array<AssetTag>
-    files: Array<AssetFile>
-    __typename: string
-    parents: {
-        items: Array<PackAsset>
-        __typename: string
-    }
-    bpm?: number
-    chord_type?: string
-    key?: string
-    duration: number
-    asset_category_slug: string
-}
-
-export type PackAsset = {
-    permalink_slug: string
-    permalink_base_url: string
-    uuid: string
-    name: string
-    files: Array<AssetFile>
-    __typename: string
-}
-
-export type SoundsSearchAutocompleteResponse = {
-    data: {
-        soundsSearchSuggestions: {
-            autocompleteUuid: string
-            results: Array<AutocompleteSuggestion>
-            __typename: string
-        }
-    }
-}
-
-export type AutocompleteSuggestion = {
-    autocompleteTerm: string
-    termType: string
-    length: number
-    offset: number
-    __typename: string
-}
-
 // ---------------------------------------------------------------
 
 const GRAPHQL_URL = "https://surfaces-graphql.splice.com/graphql"
@@ -198,7 +96,7 @@ export async function querySplice(
         console.error(await response.text())
         return null
     }
-    const data = (await response.json())
-    console.log("📬 Received", data, "after", Date.now() - startTime, "ms")
-    return data
+    const json = await response.json()
+    console.log("📬 Received", json, "after", Date.now() - startTime, "ms")
+    return json
 }

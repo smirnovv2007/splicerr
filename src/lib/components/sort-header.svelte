@@ -5,6 +5,7 @@
     import Button, {
         type ButtonProps,
     } from "$lib/components/ui/button/button.svelte"
+    import type { AssetSortType, SortOrder } from "$lib/splice/types"
 
     let {
         class: className,
@@ -18,8 +19,8 @@
         class?: string
         value: string
         label: string
-        sort: string
-        order: "ASC" | "DESC"
+        sort: AssetSortType
+        order: SortOrder
         onsort: CallableFunction
         restProps?: ButtonProps
     } = $props()

@@ -2,6 +2,7 @@
     import * as Select from "$lib/components/ui/select/index"
     import ChevronDown from "lucide-svelte/icons/chevron-down"
     import { cn } from "$lib/utils"
+    import type { SortOrder } from "$lib/splice/types"
 
     let {
         sort = $bindable(),
@@ -10,7 +11,7 @@
     }: {
         sort: string
         onselect: CallableFunction
-        order: "ASC" | "DESC"
+        order: SortOrder
     } = $props()
 
     const options = [

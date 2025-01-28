@@ -63,7 +63,7 @@
             const matches =
                 Array.from(
                     cleaned.matchAll(/^\s*(\d+)\s*(-\s*(\d+))?\s*$/g)
-                )?.[0]?.filter((match) => match != undefined) || []
+                )?.[0]?.filter((match) => match != undefined) ?? []
             if (matches.length == 1 || matches.length == 2) {
                 bpm = matches[1]
                 min_bpm = null

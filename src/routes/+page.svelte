@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { querySplice, SamplesSearch, type AssetTag, type SampleAsset, type SamplesSearchResponse } from "$lib/splice/api"
+    import { querySplice, SamplesSearch } from "$lib/splice/api"
     import Waveform from "$lib/components/waveform.svelte"
     import SearchInput from "$lib/components/search-input.svelte"
     import { ScrollArea } from "$lib/components/ui/scroll-area"
@@ -26,6 +26,7 @@
     import AudioPlayer from "$lib/components/audio-player.svelte"
     import TagBadge from "$lib/components/tag-badge.svelte"
     import { globalAudio } from "$lib/audio.svelte"
+    import type { AssetSortType, SortOrder, SampleAsset, TagSummaryEntry, SamplesSearchResponse } from "$lib/splice/types"
 
     const DEFAULT_SORT = "popularity"
     const PER_PAGE = 50
@@ -34,9 +35,9 @@
         Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString()
 
     let query = $state("")
-    let sort = $state(DEFAULT_SORT)
+    let sort = $state<AssetSortType>(DEFAULT_SORT)
     let random_seed = $state<string | null>(newSeed())
-    let order = $state<"ASC" | "DESC">("DESC")
+    let order = $state<SortOrder>("DESC")
     let page = $state(1)
     let tags = $state<string[]>([])
     let asset_category_slug = $state<string | null>(null)
@@ -45,16 +46,16 @@
     let max_bpm = $state<number | null>(null)
 
     let assets = $state<SampleAsset[]>([])
-    let response_metadata = $state<any>()
-    let tag_summary = $state<any>()
+    let total_records = $state(0)
+    let tag_summary = $state<TagSummaryEntry[]>([])
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
     const instrumentTags = $derived(() =>
-        tag_summary.filter((tag: any) => tag.tag.taxonomy.name == "Instrument")
+        tag_summary.filter((entry) => entry.tag.taxonomy.name == "Instrument")
     )
 
     const genreTags = $derived(() =>
-        tag_summary.filter((tag: any) => tag.tag.taxonomy.name == "Genre")
+        tag_summary.filter((entry) => entry.tag.taxonomy.name == "Genre")
     )
 
     $effect(() => {
@@ -110,8 +111,8 @@
             ...queryIdentity,
             page,
             limit: PER_PAGE,
-        }).then((data) => {
-            const searchResult = (data as SamplesSearchResponse).data.assetsSearch
+        }).then((response) => {
+            const searchResult = (response as SamplesSearchResponse).data.assetsSearch
             const identityAfterFetch = JSON.stringify(queryIdentity)
             if (identityBeforeFetch == identityAfterFetch) {
                 if (identityBeforeFetch == currentQueryIdentity) {
@@ -123,7 +124,7 @@
                     page = 1
                     console.log("Loaded new assets")
                 }
-                response_metadata = searchResult.response_metadata
+                total_records = searchResult.response_metadata.records
 
                 tagsDrawerRef.style.height =
                     tagsContainerRef.offsetHeight + "px"
@@ -137,7 +138,7 @@
         })
     }
 
-    const updateSort = (newSort: string) => {
+    const updateSort = (newSort: AssetSortType) => {
         if (sort == newSort) {
             if (order == "DESC") {
                 order = "ASC"
@@ -272,7 +273,7 @@
 
         <div class="flex justify-between items-end gap-2">
             <div class="text-muted-foreground text-xs flex-grow">
-                {(response_metadata?.records as number).toLocaleString() || 0} results
+                {total_records} results
             </div>
             <Button
                 variant="outline"
@@ -385,7 +386,7 @@
                                             label={tag.label}
                                             variant="ghost"
                                             class="px-1 py-0.5 h-auto"
-                                            count={tag_summary_tag.count}
+                                            count={tag_summary_tag?.count ?? 0}
                                             onclick={() => {
                                                 if (!active) {
                                                     tags.push(tag.uuid)
@@ -400,7 +401,7 @@
                         </div>
                         <Waveform
                             src={asset.files[1].url}
-                            progress={globalAudio.ref.src == asset.files[1].url
+                            progress={globalAudio.ref.src == asset.files[0].url
                                 ? globalAudio.progress()
                                 : 0}
                             onload={(loading: boolean) => {
@@ -418,12 +419,12 @@
                         <div
                             class="text-muted-foreground min-w-14 w-14 flex-grow"
                         >
-                            {(asset.key && formatKey(asset.key)) || "--"}
+                            {(asset.key && formatKey(asset.key)) ?? "--"}
                         </div>
                         <div
                             class="text-muted-foreground min-w-14 w-14 flex-grow"
                         >
-                            {asset.bpm || "--"}
+                            {asset.bpm ?? "--"}
                         </div>
                     </div>
                 {:else}
