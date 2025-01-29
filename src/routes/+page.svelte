@@ -271,7 +271,6 @@
     <ScrollArea
         class="px-4 flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
-        onscroll={/* (event) => window.dispatchEvent(event) /* shitty hack, doesn't even work */}
     >
         <div class="flex flex-col py-2 size-full">
             {#if dataStore.assets}
