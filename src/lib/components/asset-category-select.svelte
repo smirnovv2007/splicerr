@@ -4,7 +4,7 @@
     let {
         asset_category_slug = $bindable(),
         onselect,
-    }: { asset_category_slug: string | null; onselect: CallableFunction } = $props()
+    }: { asset_category_slug: string | null; onselect: () => void } = $props()
 
     const options = [
         {
@@ -22,11 +22,12 @@
     ]
 
     const triggerContent = $derived(
-        options.find((option) => option.value === value)?.label ??
-            "Category..."
+        options.find((option) => option.value === value)?.label ?? "Category..."
     )
 
-    const value = $derived(asset_category_slug == null ? "null" : asset_category_slug)
+    const value = $derived(
+        asset_category_slug == null ? "null" : asset_category_slug
+    )
 </script>
 
 <Select.Root

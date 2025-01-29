@@ -1,57 +1,84 @@
 <script lang="ts">
+    import { loading } from "$lib/shared/loading.svelte"
     import { uid } from "$lib/shared/uid"
     import { cn } from "$lib/utils"
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
-    import { inview } from "svelte-inview"
-    import type { MouseEventHandler } from "svelte/elements"
-
-    const WAVEFORM_LENGTH = 800
 
     const key = `progress-gradient-${uid()}`
+
+    let dragging = false
+    let ref = null! as HTMLButtonElement
+    const onmousemove = (event: MouseEvent) => {
+        if (dragging) {
+            const rect = ref.getBoundingClientRect()
+            progress = (event.clientX - rect.left) / rect.width
+        }
+    }
 
     let {
         src,
         progress = 0,
         class: className,
-        onclick,
-        onload,
+        onseek,
     }: {
         src: string
         progress?: number
         class?: string
-        onclick: MouseEventHandler<HTMLButtonElement>
-        onload: CallableFunction
+        onseek: (progress: number) => void
     } = $props()
 
-    let waveform: number[] = $state(new Array(WAVEFORM_LENGTH).fill(0))
+    let waveform = $state<number[] | null>(null)
 
-    let isInView = $state(false)
+    let loadedSrc = $state("")
+
+    let isLoading = $state(false)
+
+    const loaded = $derived(loadedSrc == src)
 
     $effect(() => {
-        if (src) {
-            onload(true)
-            fetch(src).then((resp) => {
-                onload(false)
-                if (resp.headers.get("content-encoding") == "gzip") {
-                    resp.arrayBuffer().then((buff) => {
-                        const inflated = pako.inflate(new Uint8Array(buff), {
-                            to: "string",
-                        })
-                        waveform = JSON.parse(inflated)
-                    })
-                } else {
-                    resp.json().then((json) => {
-                        waveform = json
-                    })
-                }
-            })
-        } else {
-            waveform = new Array(WAVEFORM_LENGTH).fill(0)
+        if (!isLoading && !loaded && !loading.fetchError) {
+            fetchWaveform()
         }
     })
 
-    // Function to generate the SVG path for the waveform
+    function fetchWaveform() {
+        isLoading = true
+        loading.waveformsCount += 1
+        const loadingSrc = src
+        fetch(src)
+            .then((resp) => {
+                if (loadingSrc == src) {
+                    if (resp.headers.get("content-encoding") == "gzip") {
+                        resp.arrayBuffer().then((buff) => {
+                            const inflated = pako.inflate(
+                                new Uint8Array(buff),
+                                {
+                                    to: "string",
+                                }
+                            )
+                            waveform = JSON.parse(inflated)
+                        })
+                    } else {
+                        resp.json().then((json) => {
+                            waveform = json
+                        })
+                    }
+                    loadedSrc = src
+                    loading.waveformsCount -= 1
+                    isLoading = false
+                } else {
+                    console.info("🕜 Ignored stale waveform")
+                    loading.waveformsCount -= 1
+                    isLoading = false
+                }
+            })
+            .catch((error: Error) => {
+                console.error("⚠️ Failed loading waveform", error)
+                loading.waveformsCount -= 1
+            })
+    }
+
     function generateWaveformPath(data: number[]) {
         const pathData = []
         const width = 1000 // Total width of the SVG
@@ -80,25 +107,58 @@
 </script>
 
 <button
-    use:inview
-    oninview_change={({ detail }) => (isInView = detail.inView)}
     class={cn(className)}
-    {onclick}
+    onclick={(event) => {
+        const rect = ref.getBoundingClientRect()
+        progress = (event.clientX - rect.left) / rect.width
+        onseek(progress)
+    }}
+    bind:this={ref}
+    onmousedown={() => {
+        dragging = true
+        document.addEventListener("mousemove", onmousemove)
+        document.addEventListener(
+            "mouseup",
+            (event) => {
+                dragging = false
+                document.removeEventListener("mousemove", onmousemove)
+                const rect = ref.getBoundingClientRect()
+                progress = (event.clientX - rect.left) / rect.width
+                onseek(progress)
+            },
+            {
+                once: true,
+            }
+        )
+    }}
+    onmousemove={(e) => {
+        if (dragging) {
+            const rect = ref.getBoundingClientRect()
+            progress = (e.clientX - rect.left) / rect.width
+            onseek(progress)
+        }
+    }}
     aria-label="Waveform"
 >
-    <svg class="size-full" viewBox={`0 0 1000 200`} preserveAspectRatio="none">
-        <defs>
-            <linearGradient id={key} x1="0" y1="0" x2="1" y2="0">
-                <stop
-                    offset={`${progress * 100}%`}
-                    stop-color="hsl(var(--primary))"
-                />
-                <stop
-                    offset={`${progress * 100}%`}
-                    stop-color="hsl(var(--muted-foreground))"
-                />
-            </linearGradient>
-        </defs>
-        <path d={generateWaveformPath(waveform)} fill={`url(#${key})`} />
-    </svg>
+    {#if loaded && waveform}
+        <svg
+            class="size-full animate-waveform-reveal"
+            viewBox={`0 0 1000 200`}
+            preserveAspectRatio="none"
+        >
+            <defs>
+                <linearGradient id={key} x1="0" y1="0" x2="1" y2="0">
+                    <stop
+                        offset={`${progress * 100 || 0}%`}
+                        stop-color="hsl(var(--primary))"
+                    />
+                    <stop
+                        offset={`${progress * 100 || 0}%`}
+                        stop-color="hsl(var(--muted-foreground))"
+                    />
+                </linearGradient>
+            </defs>
+            <path d={generateWaveformPath(waveform)} fill={`url(#${key})`} />
+        </svg>
+    {/if}
 </button>

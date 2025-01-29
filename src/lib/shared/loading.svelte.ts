@@ -1,5 +1,8 @@
 export const loading = $state({
     assets: false,
-    waveforms: 0,
+    waveformsCount: 0,
+    samples: new Set<string>(),
+    samplesCount: 0,
     beforeFirstLoad: true,
+    fetchError: null as Error | null,
 })

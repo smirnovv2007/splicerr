@@ -55,7 +55,7 @@ export type AssetFile = {
 }
 
 export type SampleAsset = {
-    asset_type_slug: string
+    asset_type_slug: AssetTypeSlug
     asset_prices: Array<AssetPrice>
     uuid: string
     name: string
@@ -70,7 +70,7 @@ export type SampleAsset = {
     chord_type?: string
     key?: string
     duration: number
-    asset_category_slug: string
+    asset_category_slug: AssetCategorySlug
 }
 
 export type PackAsset = {
@@ -112,4 +112,6 @@ export type AssetSortType =
     | "key"
     | "name"
 
-export type AssetCategorySlug = "sample" | "preset" | "pack"
+export type AssetTypeSlug = "sample" | "preset" | "pack"
+
+export type AssetCategorySlug = "loop" | "oneshot"

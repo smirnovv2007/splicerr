@@ -11,7 +11,7 @@
         <Separator />
         <div
             class={cn(
-                "absolute top-0 animate-progress-loading w-full h-full bg-primary origin-left-right transition-[opacity] duration-1000",
+                "absolute top-0 animate-progress-loading w-full h-full bg-muted-foreground origin-left-right transition-[opacity] [transition-duration:1s]",
                 !loading && "opacity-0"
             )}
         ></div>

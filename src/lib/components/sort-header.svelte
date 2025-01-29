@@ -17,11 +17,11 @@
         ...restProps
     }: {
         class?: string
-        value: string
+        value: AssetSortType
         label: string
         sort: AssetSortType
         order: SortOrder
-        onsort: CallableFunction
+        onsort: (newSort: AssetSortType) => void
         restProps?: ButtonProps
     } = $props()
 
@@ -36,7 +36,7 @@
             "gap-0 p-1",
             active ? "text-primary" : "text-muted-foreground"
         )}
-        onclick={()=> onsort(value)}
+        onclick={() => onsort(value)}
         {...restProps}
     >
         <p>{label}</p>

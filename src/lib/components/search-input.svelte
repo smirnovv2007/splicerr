@@ -13,7 +13,7 @@
         inputRef = $bindable(null!),
     }: {
         value: string
-        onsubmit: CallableFunction
+        onsubmit: () => void
         class?: string
         inputRef?: HTMLInputElement
     } = $props()
@@ -27,7 +27,7 @@
     let suggestions = $state<AutocompleteSuggestion[]>([])
 
     let timer: number
-    const debounce = (action: CallableFunction, time: number = 200) => {
+    const debounce = (action: () => void, time: number = 200) => {
         clearTimeout(timer)
         timer = setTimeout(() => {
             action()
@@ -124,7 +124,7 @@
                 {#each suggestions as suggestion, index}
                     <Button
                         class={cn(
-                            "w-full text-left justify-normal font-normal text-base duration-250",
+                            "w-full text-left justify-normal font-normal text-base md:text-sm duration-250 h-7",
                             index == selectIndex
                                 ? "bg-accent text-accent-foreground"
                                 : "hover:bg-transparent hover:text-current"

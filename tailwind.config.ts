@@ -89,20 +89,33 @@ const config: Config = {
                     "20%,50%": { opacity: "0" },
                 },
                 "progress-loading": {
-                    "0%": { transform: " translateX(0) scaleX(0)" },
-                    "40%": { transform: "translateX(0) scaleX(0.4)" },
-                    "100%": { transform: "translateX(100%) scaleX(0.5)" },
+                    "0%": {
+                        transform: " translateX(0) scaleX(0)",
+                    },
+                    "50%": {
+                        transform: "translateX(0) scaleX(1)",
+                    },
+                    "100%": {
+                        transform: "translateX(100%) scaleX(1)",
+                    },
+                },
+                "waveform-reveal": {
+                    "0%": { clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" },
+                    "100%": {
+                        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+                    },
                 },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
                 "caret-blink": "caret-blink 1.25s ease-out infinite",
-                "progress-loading": "progress-loading 1s infinite linear",
+                "progress-loading": "progress-loading 4s ease-in-out infinite",
+                "waveform-reveal": "waveform-reveal 1s ease-in-out",
             },
             transformOrigin: {
                 "left-right": "0% 50%",
-            }
+            },
         },
     },
     plugins: [tailwindcssAnimate],

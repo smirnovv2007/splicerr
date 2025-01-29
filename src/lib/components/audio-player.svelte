@@ -1,7 +1,6 @@
 <script lang="ts">
     import { cn } from "$lib/utils"
     import Button from "$lib/components/ui/button/button.svelte"
-    import { onMount } from "svelte"
     import Play from "lucide-svelte/icons/play"
     import Pause from "lucide-svelte/icons/pause"
     import SkipForward from "lucide-svelte/icons/skip-forward"
@@ -19,11 +18,6 @@
         onnext: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
         onprev: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
     } = $props()
-
-    onMount(() => {
-        globalAudio.ref.src =
-            "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/34e367b7-2f86-4d91-bf7a-33127edb78f8/demo.mp3"
-    })
 </script>
 
 <div class={cn("flex flex-col w-full", className)} {...restProps}>

@@ -6,6 +6,7 @@
     import SortSelect from "$lib/components/sort-select.svelte"
     import Search from "lucide-svelte/icons/search"
     import Smile from "lucide-svelte/icons/smile"
+    import Ghost from "lucide-svelte/icons/ghost"
     import Shuffle from "lucide-svelte/icons/shuffle"
     import Button from "$lib/components/ui/button/button.svelte"
     import ProgressLoading from "$lib/components/progress-loading.svelte"
@@ -30,8 +31,7 @@
     } from "$lib/shared/store.svelte"
     import { getCurrentWebview } from "@tauri-apps/api/webview"
 
-    getCurrentWebview()
-        .setZoom(0.8)
+    getCurrentWebview().setZoom(0.8)
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
     const instrumentTags = $derived(() =>
@@ -202,7 +202,7 @@
 
         <div class="flex justify-between items-end gap-2">
             <div class="text-muted-foreground text-xs flex-grow">
-                {dataStore.total_records} results
+                {dataStore.total_records.toLocaleString()} results
             </div>
             <Button
                 variant="outline"
@@ -224,7 +224,9 @@
 
         <div class="flex flex-col gap-2">
             <Separator />
-            <div class="flex gap-4 items-center justify-between overflow-clip px-2">
+            <div
+                class="flex gap-4 items-center justify-between overflow-clip px-2"
+            >
                 <div class="w-12 min-w-12 text-xs text-muted-foreground">
                     Pack
                 </div>
@@ -264,7 +266,7 @@
                 />
             </div>
             <ProgressLoading
-                loading={loading.assets || loading.waveforms > 0}
+                loading={loading.assets || loading.waveformsCount > 0}
             />
         </div>
     </div>
@@ -273,53 +275,63 @@
         bind:viewportRef
     >
         <div class="flex flex-col py-2 size-full">
-            {#if dataStore.assets}
-                {#each dataStore.assets as asset}
-                    {@const selected =
-                        globalAudio.currentAsset?.uuid == asset.uuid}
-                    <SampleListEntry
-                        {asset}
-                        {selected}
-                        playing={selected && !globalAudio.paused}
-                    />
-                {:else}
-                    <div
-                        class="flex flex-col gap-2 justify-center items-center size-full text-muted-foreground"
-                    >
-                        {#if loading.beforeFirstLoad}
-                            <Smile size="48" />
-                            <p class="font-bold text-xl">Hey there!</p>
-                            <p class="text-sm">
-                                Make some cool music, will ya?
-                            </p>
-                        {:else}
-                            <Search size="48" />
-                            <p class="font-bold text-xl">No results</p>
-                            <p class="text-sm">Try different keywords</p>
-                        {/if}
-                    </div>
-                {/each}
+            {#each dataStore.sampleAssets as sampleAsset}
+                {@const selected = globalAudio.currentAsset?.uuid == sampleAsset.uuid}
+                <SampleListEntry
+                    {sampleAsset}
+                    {selected}
+                    playing={selected && !globalAudio.paused}
+                />
+            {:else}
+                <div
+                    class="flex flex-col gap-2 justify-center items-center size-full text-muted-foreground"
+                >
+                    {#if loading.fetchError}
+                        <Ghost size="48" />
+                        <p class="font-bold text-xl">Something went wrong :/</p>
+                        <p class="text-sm">Couldn't load any samples</p>
+                        <Button onclick={fetchAssets}>Retry</Button>
+                    {:else if loading.beforeFirstLoad}
+                        <Smile size="48" />
+                        <p class="font-bold text-xl">Hey there!</p>
+                        <p class="text-sm">Make some cool music, will ya?</p>
+                    {:else}
+                        <Search size="48" />
+                        <p class="font-bold text-xl">No results</p>
+                        <p class="text-sm">Try different keywords</p>
+                    {/if}
+                </div>
+            {/each}
+            {#if loading.fetchError && dataStore.sampleAssets.length > 0}
+                <div
+                    class="flex flex-col py-8 gap-2 justify-center items-center text-muted-foreground"
+                >
+                    <Ghost size="48" />
+                    <p class="font-bold text-xl">Something went wrong :/</p>
+                    <p class="text-sm">Couldn't load any more samples</p>
+                    <Button onclick={fetchAssets}>Retry</Button>
+                </div>
             {/if}
         </div>
     </ScrollArea>
     <AudioPlayer
         onprev={() => {
-            const currentIndex = dataStore.assets.findIndex(
+            const currentIndex = dataStore.sampleAssets.findIndex(
                 (asset) => asset.uuid === globalAudio.currentAsset?.uuid
             )
             if (currentIndex !== -1 && currentIndex - 1 >= 0) {
-                globalAudio.playAsset(dataStore.assets[currentIndex - 1])
+                globalAudio.playSampleAsset(dataStore.sampleAssets[currentIndex - 1])
             }
         }}
         onnext={() => {
-            const currentIndex = dataStore.assets.findIndex(
+            const currentIndex = dataStore.sampleAssets.findIndex(
                 (asset) => asset.uuid === globalAudio.currentAsset?.uuid
             )
             if (
                 currentIndex !== -1 &&
-                currentIndex + 1 < dataStore.assets.length
+                currentIndex + 1 < dataStore.sampleAssets.length
             ) {
-                globalAudio.playAsset(dataStore.assets[currentIndex + 1])
+                globalAudio.playSampleAsset(dataStore.sampleAssets[currentIndex + 1])
             }
         }}
     />

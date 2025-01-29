@@ -10,7 +10,7 @@
         order,
     }: {
         sort: string
-        onselect: CallableFunction
+        onselect: () => void
         order: SortOrder
     } = $props()
 

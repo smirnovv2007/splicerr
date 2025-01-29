@@ -20,7 +20,7 @@
         bpm: string | null
         min_bpm: number | null
         max_bpm: number | null
-        onsubmit: CallableFunction
+        onsubmit: () => void
     } = $props()
 
     let inputRef = $state<HTMLInputElement>(null!)
@@ -33,7 +33,7 @@
     let open = $state(false)
 
     let timer: number
-    const debounce = (action: CallableFunction, time: number = 200) => {
+    const debounce = (action: () => void, time: number = 200) => {
         clearTimeout(timer)
         timer = setTimeout(() => {
             action()
