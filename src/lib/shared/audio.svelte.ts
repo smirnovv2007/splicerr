@@ -8,6 +8,7 @@ export const globalAudio = $state({
     paused: true,
     currentTime: 0,
     duration: 0,
+    loading: false,
     progress() {
         return this.currentTime / this.duration
     },

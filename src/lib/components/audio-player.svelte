@@ -7,6 +7,8 @@
     import SkipBack from "lucide-svelte/icons/skip-back"
     import { globalAudio } from "$lib/shared/audio.svelte"
     import type { MouseEventHandler } from "svelte/elements"
+    import LoaderCircle from "lucide-svelte/icons/loader-circle"
+    import { loading } from "$lib/shared/loading.svelte"
 
     let {
         class: className,
@@ -15,8 +17,10 @@
         ...restProps
     }: {
         class?: string
-        onnext: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
-        onprev: MouseEventHandler<HTMLButtonElement> & MouseEventHandler<HTMLAnchorElement>
+        onnext: MouseEventHandler<HTMLButtonElement> &
+            MouseEventHandler<HTMLAnchorElement>
+        onprev: MouseEventHandler<HTMLButtonElement> &
+            MouseEventHandler<HTMLAnchorElement>
     } = $props()
 </script>
 
@@ -26,6 +30,12 @@
         bind:paused={globalAudio.paused}
         bind:currentTime={globalAudio.currentTime}
         bind:duration={globalAudio.duration}
+        onloadstart={() => {
+            globalAudio.loading = true
+        }}
+        oncanplaythrough={() => {
+            globalAudio.loading = false
+        }}
     ></audio>
     <input
         style="--progress: {globalAudio.progress() * 100}%"
@@ -51,7 +61,9 @@
                 size="icon"
                 onclick={() => globalAudio.toggle()}
             >
-                {#if globalAudio.paused}
+                {#if globalAudio.loading || loading.samplesCount}
+                    <LoaderCircle class="animate-spin" />
+                {:else if globalAudio.paused}
                     <Play />
                 {:else}
                     <Pause />

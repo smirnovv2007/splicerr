@@ -99,19 +99,12 @@ const config: Config = {
                         transform: "translateX(100%) scaleX(1)",
                     },
                 },
-                "waveform-reveal": {
-                    "0%": { clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" },
-                    "100%": {
-                        clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-                    },
-                },
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
                 "caret-blink": "caret-blink 1.25s ease-out infinite",
                 "progress-loading": "progress-loading 4s ease-in-out infinite",
-                "waveform-reveal": "waveform-reveal 1s ease-in-out",
             },
             transformOrigin: {
                 "left-right": "0% 50%",

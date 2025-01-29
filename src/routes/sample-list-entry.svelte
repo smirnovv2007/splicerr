@@ -70,7 +70,7 @@
                 ? globalAudio.ref.pause()
                 : globalAudio.playSampleAsset(sampleAsset)}
     >
-        {#if loading.samplesCount && loading.samples.has(sampleAsset.uuid)}
+        {#if selected && globalAudio.loading || loading.samplesCount && loading.samples.has(sampleAsset.uuid)}
             <LoaderCircle class="animate-spin" />
         {:else if playing}
             <Pause />

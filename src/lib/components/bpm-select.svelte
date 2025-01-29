@@ -42,8 +42,8 @@
 
     const handleBlur = (event: FocusEvent) => {
         if (
-            event.relatedTarget == cardRef ||
-            cardRef.contains(event.relatedTarget as Node)
+            (event.relatedTarget == cardRef ||
+            cardRef.contains(event.relatedTarget as Node)) && event.currentTarget != inputRef
         ) {
             inputRef.focus()
         } else {
@@ -96,6 +96,7 @@
             e.preventDefault()
             inputRef.focus()
         }}
+        tabindex={-1}
         onclick={() => inputRef.focus()}
         data-command-input-wrapper=""
         {...restProps}
@@ -109,24 +110,24 @@
             onfocus={() => (open = true)}
             onblur={handleBlur}
             oninput={handleInput}
-            onkeydown={(e) => {
-                if (e.key === "Escape" || e.key === "Enter") {
+            onkeydown={(event) => {
+                if (event.key === "Escape" || event.key === "Enter") {
                     open = false
                     return
                 }
-                if (e.key === "ArrowDown") {
+                if (event.key === "ArrowDown") {
                     if (bpm) {
                         bpm = Math.max(parseInt(bpm) - 1, 0).toString()
                         debounce(onsubmit)
                     }
-                } else if (e.key === "ArrowUp") {
+                } else if (event.key === "ArrowUp") {
                     if (bpm) {
                         bpm = Math.max(parseInt(bpm) + 1, 0).toString()
                         debounce(onsubmit)
                     }
                 }
-                if (e.key == "ArrowDown" || e.key == "ArrowUp") {
-                    e.preventDefault()
+                if (event.key == "ArrowDown" || event.key == "ArrowUp") {
+                    event.preventDefault()
                 }
             }}
             class="select-all w-full h-10 placeholder:text-transparent focus:placeholder:text-muted-foreground flex rounded-md bg-transparent py-3 text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

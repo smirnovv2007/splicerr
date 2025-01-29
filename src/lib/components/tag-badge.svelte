@@ -25,7 +25,7 @@
 
 <Tooltip.Provider>
     <Tooltip.Root>
-        <Tooltip.Trigger>
+        <Tooltip.Trigger class="focus:outline-none" tabindex={-1}>
             <Button
                 class={cn(
                     "px-2 min-w-14 h-6 justify-center shrink-0",

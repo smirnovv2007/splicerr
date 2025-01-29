@@ -1,9 +1,10 @@
 <script lang="ts">
     import { loading } from "$lib/shared/loading.svelte"
     import { uid } from "$lib/shared/uid"
-    import { cn } from "$lib/utils"
     import { fetch } from "@tauri-apps/plugin-http"
     import pako from "pako"
+    import { inview } from "svelte-inview"
+    import { cn } from "$lib/utils"
 
     const key = `progress-gradient-${uid()}`
 
@@ -33,6 +34,8 @@
     let loadedSrc = $state("")
 
     let isLoading = $state(false)
+
+    let isInView = $state(true)
 
     const loaded = $derived(loadedSrc == src)
 
@@ -107,7 +110,10 @@
 </script>
 
 <button
-    class={cn(className)}
+    class={cn(className, "focus:outline-none")}
+    use:inview
+    tabindex={-1}
+    oninview_change={(event) => (isInView = event.detail.inView)}
     onclick={(event) => {
         const rect = ref.getBoundingClientRect()
         progress = (event.clientX - rect.left) / rect.width
@@ -140,9 +146,13 @@
     }}
     aria-label="Waveform"
 >
-    {#if loaded && waveform}
+    {#if waveform}
         <svg
-            class="size-full animate-waveform-reveal"
+            class={cn(
+                "size-full transition-transform duration-1000",
+                isInView && "",
+                !loaded && "scale-y-0"
+            )}
             viewBox={`0 0 1000 200`}
             preserveAspectRatio="none"
         >

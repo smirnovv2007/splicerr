@@ -46,11 +46,11 @@
             "flex items-center border-input border px-3 rounded-md w-full cursor-text gap-2 ring-offset-background focus-within:ring-ring focus:ring-ring h-9 justify-between whitespace-nowrap bg-transparent py-2 text-sm shadow-sm focus-within:outline-none focus:outline-none focus-within:ring-1 focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
             className
         )}
-        data-command-input-wrapper=""
         onmousedown={(e) => {
             e.preventDefault()
             inputRef.focus()
         }}
+        tabindex={-1}
         onclick={() => inputRef.focus()}
     >
         <Search class="mr-2 size-4 shrink-0 opacity-50" />
@@ -60,29 +60,29 @@
             placeholder="Search samples..."
             onfocus={() => (open = true)}
             onblur={() => (open = false)}
-            onkeydown={(e) => {
-                if (e.key === "Enter") {
+            onkeydown={(event) => {
+                if (event.key === "Enter") {
                     open = false
                     if (value !== lastSubmittedValue) {
                         submit()
                     }
                     return
-                } else if (e.key === "Escape") {
+                } else if (event.key === "Escape") {
                     open = false
                     return
                 }
-                if (e.key === "ArrowDown") {
+                if (event.key === "ArrowDown") {
                     selectIndex = Math.min(
                         selectIndex + 1,
                         suggestions.length - 1
                     )
-                } else if (e.key === "ArrowUp") {
+                } else if (event.key === "ArrowUp") {
                     if (selectIndex == -1) {
                         open = false
                     }
                     selectIndex = Math.max(selectIndex - 1, -1)
                 }
-                if (e.key == "ArrowUp" || e.key == "ArrowDown") {
+                if (event.key == "ArrowUp" || event.key == "ArrowDown") {
                     if (selectIndex >= 0 && selectIndex < suggestions.length) {
                         value = suggestions[selectIndex].autocompleteTerm
                         if (value !== lastSubmittedValue) {
@@ -91,7 +91,7 @@
                         open = true
                     }
                     if (suggestions.length > 0) {
-                        e.preventDefault()
+                        event.preventDefault()
                     }
                 }
             }}
@@ -131,6 +131,7 @@
                         )}
                         onmousemove={() => (selectIndex = index)}
                         size="sm"
+                        tabindex={-1}
                         variant="ghost"
                         onmousedown={() => {
                             value = suggestion.autocompleteTerm
