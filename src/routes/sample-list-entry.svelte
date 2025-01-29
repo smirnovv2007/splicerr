@@ -87,7 +87,7 @@
         >
             <Tooltip.Provider>
                 <Tooltip.Root>
-                    <Tooltip.Trigger class="overflow-clip cursor-default">
+                    <Tooltip.Trigger class="overflow-clip cursor-default text-nowrap">
                         {name}
                     </Tooltip.Trigger>
                     <Tooltip.Content>

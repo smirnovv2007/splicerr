@@ -48,7 +48,7 @@ const queryIdentity = $derived({
     max_bpm: queryStore.max_bpm,
 })
 
-const storeCallbacks = $state({
+export const storeCallbacks = $state({
     onbeforedataupdate: null as CallableFunction | null,
     onbeforetagsupdate: null as CallableFunction | null,
 })
@@ -59,7 +59,6 @@ export const fetchAssets = () => {
     const identityBeforeFetch = JSON.stringify(queryIdentity)
     if (identityBeforeFetch != currentQueryIdentity) {
         storeCallbacks.onbeforedataupdate?.()
-        // viewportRef.scrollTo({ top: 0, behavior: "smooth" })
     }
     loading.assets = true
     querySplice(SamplesSearch, {
@@ -83,7 +82,6 @@ export const fetchAssets = () => {
             dataStore.total_records = searchResult.response_metadata.records
 
             storeCallbacks.onbeforetagsupdate?.()
-            // tagsDrawerRef.style.height = tagsContainerRef.offsetHeight + "px"
             dataStore.tag_summary = searchResult.tag_summary
 
             loading.assets = false

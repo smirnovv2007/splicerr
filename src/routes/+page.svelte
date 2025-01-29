@@ -22,12 +22,16 @@
     import { loading } from "$lib/shared/loading.svelte"
     import {
         dataStore,
+        storeCallbacks,
         queryStore,
         fetchAssets,
         DEFAULT_SORT,
         randomSeed,
     } from "$lib/shared/store.svelte"
-    import { page } from "$app/state"
+    import { getCurrentWebview } from "@tauri-apps/api/webview"
+
+    getCurrentWebview()
+        .setZoom(0.8)
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
     const instrumentTags = $derived(() =>
@@ -49,6 +53,14 @@
             queryStore.order = "DESC"
         }
     })
+
+    storeCallbacks.onbeforedataupdate = () => {
+        viewportRef.scrollTo({ top: 0, behavior: "smooth" })
+    }
+
+    storeCallbacks.onbeforetagsupdate = () => {
+        tagsDrawerRef.style.height = `${tagsContainerRef.offsetHeight}px`
+    }
 
     let expandTags = $state(false)
 
@@ -98,7 +110,7 @@
 </script>
 
 <main class="flex flex-col size-full">
-    <div class="container flex flex-col pt-4 gap-4">
+    <div class="flex flex-col p-4 gap-4">
         <div class="flex gap-4 justify-between items-center">
             <SearchInput
                 bind:value={queryStore.query}
@@ -212,7 +224,7 @@
 
         <div class="flex flex-col gap-2">
             <Separator />
-            <div class="flex gap-4 items-center justify-between overflow-clip">
+            <div class="flex gap-4 items-center justify-between overflow-clip px-2">
                 <div class="w-12 min-w-12 text-xs text-muted-foreground">
                     Pack
                 </div>
@@ -257,8 +269,9 @@
         </div>
     </div>
     <ScrollArea
-        class="container flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
+        class="px-4 flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
+        onscroll={(event) => window.dispatchEvent(event)}
     >
         <div class="flex flex-col py-2 size-full">
             {#if dataStore.assets}
