@@ -24,7 +24,7 @@
     } = $props()
 </script>
 
-<div class={cn("flex flex-col w-full", className)} {...restProps}>
+<div class={cn("flex flex-col w-full px-2", className)} {...restProps}>
     <audio
         bind:this={globalAudio.ref}
         bind:paused={globalAudio.paused}
@@ -50,15 +50,13 @@
     <div class="flex items-center justify-between p-1">
         <div class="flex gap-1">
             <Button
-                class="[&_svg]:size-5"
                 variant="ghost"
-                size="icon"
+                size="icon-lg"
                 onclick={onprev}><SkipBack /></Button
             >
             <Button
-                class="[&_svg]:size-5"
                 variant="ghost"
-                size="icon"
+                size="icon-lg"
                 onclick={() => globalAudio.toggle()}
             >
                 {#if globalAudio.loading || loading.samplesCount}
@@ -70,9 +68,8 @@
                 {/if}
             </Button>
             <Button
-                class="[&_svg]:size-5"
                 variant="ghost"
-                size="icon"
+                size="icon-lg"
                 onclick={onnext}><SkipForward /></Button
             >
         </div>

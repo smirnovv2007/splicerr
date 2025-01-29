@@ -17,6 +17,8 @@
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
     import { cn } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
+    import { startDrag } from "@crabnebula/tauri-plugin-drag"
+    import { sanitizePath } from "$lib/shared/files.svelte"
 
     let {
         class: className,
@@ -40,8 +42,6 @@
         pack: DiscAlbum,
     }
 
-    // TODO: Pre fetch if in view
-
     const formatKey = (key: string) => {
         const upper = key.toUpperCase()
         return upper + (key != upper ? " min" : "")
@@ -54,23 +54,30 @@
     }
 </script>
 
-<div
+<button
     class={cn(
-        "flex gap-4 items-center justify-between p-1 rounded-lg",
+        "flex gap-2 md:gap-4 items-center justify-between p-1 rounded-lg cursor-grab",
         selected && "bg-muted",
         className
     )}
+    draggable="true"
+    onmousedown={() => globalAudio.selectSampleAsset(sampleAsset)}
+    ondragstart={() => {
+        console.log("💾 Dragging", sanitizePath(sampleAsset.name))
+        // startDrag({ item: ["/path/to/drag/file"], icon: "/path/to/icon/image" })
+    }}
 >
     <PackPreview src={pack.files[0].url} name={pack.name} />
     <Button
         variant="ghost"
-        class="group size-12 min-w-12 rounded p-0 [&_svg]:size-6"
+        class="group min-w-12"
+        size="icon-lg"
         onclick={() =>
             playing
                 ? globalAudio.ref.pause()
                 : globalAudio.playSampleAsset(sampleAsset)}
     >
-        {#if selected && globalAudio.loading || loading.samplesCount && loading.samples.has(sampleAsset.uuid)}
+        {#if (selected && globalAudio.loading) || (loading.samplesCount && loading.samples.has(sampleAsset.uuid))}
             <LoaderCircle class="animate-spin" />
         {:else if playing}
             <Pause />
@@ -87,14 +94,14 @@
     <div class="min-w-32 w-96 flex-[3_1_auto] overflow-clip">
         <div
             class={cn(
-                "relative after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:pointer-events-none",
+                "text-left relative after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:pointer-events-none",
                 selected ? " after:to-muted" : "after:to-background"
             )}
         >
             <Tooltip.Provider>
                 <Tooltip.Root>
                     <Tooltip.Trigger
-                        class="overflow-clip cursor-default text-nowrap"
+                        class="overflow-clip text-nowrap cursor-grab"
                     >
                         {name}
                     </Tooltip.Trigger>
@@ -144,4 +151,4 @@
     <div class="text-muted-foreground min-w-14 w-14 flex-grow">
         {sampleAsset.bpm ?? "--"}
     </div>
-</div>
+</button>

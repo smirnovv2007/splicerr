@@ -15,6 +15,13 @@ export const globalAudio = $state({
     toggle() {
         this.paused = !this.paused
     },
+    selectSampleAsset(sampleAsset: SampleAsset) {
+        if (this.currentAsset?.uuid != sampleAsset.uuid) {
+            this.paused = true
+        }
+        this.currentTime = 0
+        this.currentAsset = sampleAsset
+    },
     async playSampleAsset(sampleAsset: SampleAsset, from: number = 0) {
         if (loading.samples.has(sampleAsset.uuid)) {
             console.info("🐢 Already loading sample")
@@ -26,6 +33,6 @@ export const globalAudio = $state({
         this.ref.src = await getDescrambledSampleURL(sampleAsset)
         this.ref.currentTime = from
         this.ref.loop = sampleAsset.asset_category_slug == "loop"
-        this.ref.play()
+        this.paused = false
     },
 })

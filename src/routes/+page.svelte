@@ -34,17 +34,17 @@
     getCurrentWebview().setZoom(0.8)
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
-    const instrumentTags = $derived(() =>
-        dataStore.tag_summary.filter(
-            (entry) => entry.tag.taxonomy.name == "Instrument"
-        )
-    )
+    // const instrumentTags = $derived(() =>
+    //     dataStore.tag_summary.filter(
+    //         (entry) => entry.tag.taxonomy.name == "Instrument"
+    //     )
+    // )
 
-    const genreTags = $derived(() =>
-        dataStore.tag_summary.filter(
-            (entry) => entry.tag.taxonomy.name == "Genre"
-        )
-    )
+    // const genreTags = $derived(() =>
+    //     dataStore.tag_summary.filter(
+    //         (entry) => entry.tag.taxonomy.name == "Genre"
+    //     )
+    // )
 
     $effect(() => {
         if (
@@ -68,6 +68,12 @@
     let tagsContainerRef = $state<HTMLElement>(null!)
     let tagsDrawerRef = $state<HTMLElement>(null!)
     let searchInputRef = $state<HTMLInputElement>(null!)
+
+    const selectedSampleIndex = $derived(
+        dataStore.sampleAssets.findIndex(
+            (sampleAsset) => sampleAsset.uuid == globalAudio.currentAsset?.uuid
+        )
+    )
 
     const updateSort = (newSort: AssetSortType) => {
         if (queryStore.sort == newSort) {
@@ -225,7 +231,7 @@
         <div class="flex flex-col gap-2">
             <Separator />
             <div
-                class="flex gap-4 items-center justify-between overflow-clip px-2"
+                class="flex gap-2 md:gap-4 items-center justify-between overflow-clip px-2"
             >
                 <div class="w-12 min-w-12 text-xs text-muted-foreground">
                     Pack
@@ -275,13 +281,23 @@
         bind:viewportRef
     >
         <div class="flex flex-col py-2 size-full">
-            {#each dataStore.sampleAssets as sampleAsset}
-                {@const selected = globalAudio.currentAsset?.uuid == sampleAsset.uuid}
+            {#each dataStore.sampleAssets as sampleAsset, index}
+                {@const selected =
+                    globalAudio.currentAsset?.uuid == sampleAsset.uuid}
                 <SampleListEntry
                     {sampleAsset}
                     {selected}
                     playing={selected && !globalAudio.paused}
                 />
+                {#if index < dataStore.sampleAssets.length - 1}
+                    <div
+                        class={selected || index + 1 == selectedSampleIndex
+                            ? "px-2"
+                            : ""}
+                    >
+                        <Separator />
+                    </div>
+                {/if}
             {:else}
                 <div
                     class="flex flex-col gap-2 justify-center items-center size-full text-muted-foreground"
@@ -320,7 +336,9 @@
                 (asset) => asset.uuid === globalAudio.currentAsset?.uuid
             )
             if (currentIndex !== -1 && currentIndex - 1 >= 0) {
-                globalAudio.playSampleAsset(dataStore.sampleAssets[currentIndex - 1])
+                globalAudio.playSampleAsset(
+                    dataStore.sampleAssets[currentIndex - 1]
+                )
             }
         }}
         onnext={() => {
@@ -331,7 +349,9 @@
                 currentIndex !== -1 &&
                 currentIndex + 1 < dataStore.sampleAssets.length
             ) {
-                globalAudio.playSampleAsset(dataStore.sampleAssets[currentIndex + 1])
+                globalAudio.playSampleAsset(
+                    dataStore.sampleAssets[currentIndex + 1]
+                )
             }
         }}
     />

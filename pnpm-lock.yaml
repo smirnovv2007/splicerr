@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@crabnebula/tauri-plugin-drag':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@tauri-apps/api':
         specifier: ^2
         version: 2.2.0
@@ -88,6 +91,9 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@crabnebula/tauri-plugin-drag@2.0.0':
+    resolution: {integrity: sha512-HgYEwqvbwVY2/nqaGNI9jVAnhKvuzR85jpBgjkZjsxFYS0MToWQUywbNjYNvfGQFavxsL9EXkVIoB3EXA1ypCA==}
 
   '@esbuild/aix-ppc64@0.24.2':
     resolution: {integrity: sha512-thpVCb/rhxE/BnMLQ7GReQLLN8q9qbHmI55F4489/ByVg2aQaQ6kbcLb6FHkocZzQhxc4gx0sCk0tJkKBFzDhA==}
@@ -1246,6 +1252,10 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@crabnebula/tauri-plugin-drag@2.0.0':
+    dependencies:
+      '@tauri-apps/api': 2.2.0
 
   '@esbuild/aix-ppc64@0.24.2':
     optional: true

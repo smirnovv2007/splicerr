@@ -20,6 +20,7 @@
                 }
             ]
         },
-        "core:webview:allow-set-webview-zoom"
+        "core:webview:allow-set-webview-zoom",
+        "drag:default"
     ]
 }
