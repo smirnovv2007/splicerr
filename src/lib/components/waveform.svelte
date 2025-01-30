@@ -29,7 +29,7 @@
         onseek: (progress: number) => void
     } = $props()
 
-    let waveform = $state<number[] | null>(null)
+    let waveform = $state<number[]>(new Array(800).fill(0))
 
     let loadedSrc = $state("")
 

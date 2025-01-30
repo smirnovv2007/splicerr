@@ -56,7 +56,7 @@
 
 <button
     class={cn(
-        "flex gap-2 md:gap-4 items-center justify-between p-1 rounded-lg cursor-grab",
+        "flex gap-4 items-center justify-between p-1 rounded-lg cursor-grab",
         selected && "bg-muted",
         className
     )}
@@ -67,10 +67,13 @@
         // startDrag({ item: ["/path/to/drag/file"], icon: "/path/to/icon/image" })
     }}
 >
-    <PackPreview src={pack.files[0].url} name={pack.name} />
+    <PackPreview
+        src={pack.files[0].url}
+        name={pack.name}
+    />
     <Button
         variant="ghost"
-        class="group min-w-12"
+        class="group flex-shrink-0"
         size="icon-lg"
         onclick={() =>
             playing
@@ -142,13 +145,13 @@
         }}
         class="min-w-32 w-[150px] h-12 flex-grow md:block hidden"
     />
-    <div class="text-muted-foreground min-w-14 w-14 flex-grow">
+    <div class="text-muted-foreground flex-shrink-0 w-14 flex-grow">
         {millisToMinutesAndSeconds(sampleAsset.duration)}
     </div>
-    <div class="text-muted-foreground min-w-14 w-14 flex-grow">
+    <div class="text-muted-foreground flex-shrink-0 w-14 flex-grow">
         {(sampleAsset.key && formatKey(sampleAsset.key)) ?? "--"}
     </div>
-    <div class="text-muted-foreground min-w-14 w-14 flex-grow">
+    <div class="text-muted-foreground flex-shrink-0 w-14 flex-grow">
         {sampleAsset.bpm ?? "--"}
     </div>
 </button>

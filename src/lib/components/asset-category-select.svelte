@@ -35,7 +35,6 @@
     {value}
     onValueChange={(v) => {
         asset_category_slug = v == "null" ? null : v
-        console.log(asset_category_slug)
         onselect()
     }}
 >

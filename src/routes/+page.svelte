@@ -29,9 +29,7 @@
         DEFAULT_SORT,
         randomSeed,
     } from "$lib/shared/store.svelte"
-    import { getCurrentWebview } from "@tauri-apps/api/webview"
-
-    getCurrentWebview().setZoom(0.8)
+    import SettingsDialog from "$lib/components/settings-dialog.svelte"
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
     // const instrumentTags = $derived(() =>
@@ -89,12 +87,12 @@
         fetchAssets()
     }
 
-    const updateTagSummary = () =>
-        dataStore.tag_summary.sort(
-            (a: any, b: any) =>
-                Number(dataStore.tags.includes(b.tag.uuid)) -
-                Number(dataStore.tags.includes(a.tag.uuid))
-        )
+    // const updateTagSummary = () =>
+    //     dataStore.tag_summary.sort(
+    //         (a: any, b: any) =>
+    //             Number(dataStore.tags.includes(b.tag.uuid)) -
+    //             Number(dataStore.tags.includes(a.tag.uuid))
+    //     )
 
     onMount(() => {
         viewportRef.addEventListener("scroll", () => {
@@ -104,7 +102,7 @@
                     viewportRef.scrollHeight - viewportRef.clientHeight
             ) {
                 queryStore.page += 1
-                console.log("End of list reached, loading more assets")
+                console.log("📃 End of list reached, loading more assets")
                 fetchAssets()
             }
         })
@@ -118,6 +116,7 @@
 <main class="flex flex-col size-full">
     <div class="flex flex-col p-4 gap-4">
         <div class="flex gap-4 justify-between items-center">
+            <SettingsDialog />
             <SearchInput
                 bind:value={queryStore.query}
                 onsubmit={fetchAssets}
@@ -231,12 +230,12 @@
         <div class="flex flex-col gap-2">
             <Separator />
             <div
-                class="flex gap-2 md:gap-4 items-center justify-between overflow-clip px-2"
+                class="flex gap-2 items-center justify-between overflow-clip px-2"
             >
-                <div class="w-12 min-w-12 text-xs text-muted-foreground">
+                <div class="w-12 flex-shrink-0 text-xs text-muted-foreground">
                     Pack
                 </div>
-                <div class="w-12 min-w-12 text-xs text-muted-foreground"></div>
+                <div class="w-12 flex-shrink-0 text-xs text-muted-foreground"></div>
                 <SortHeader
                     value="name"
                     label="Filename"
@@ -252,7 +251,7 @@
                     sort={queryStore.sort}
                     order={queryStore.order}
                     onsort={updateSort}
-                    class="min-w-14 w-14 flex-grow"
+                    class="flex-shrink-0 w-14 flex-grow"
                 />
                 <SortHeader
                     value="key"
@@ -260,7 +259,7 @@
                     sort={queryStore.sort}
                     order={queryStore.order}
                     onsort={updateSort}
-                    class="min-w-14 w-14 flex-grow"
+                    class="flex-shrink-0 w-14 flex-grow"
                 />
                 <SortHeader
                     value="bpm"
@@ -268,7 +267,7 @@
                     sort={queryStore.sort}
                     order={queryStore.order}
                     onsort={updateSort}
-                    class="min-w-14 w-14 flex-grow"
+                    class="flex-shrink-0 w-14 flex-grow"
                 />
             </div>
             <ProgressLoading

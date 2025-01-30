@@ -11,7 +11,6 @@
         variant = "default",
         count,
         onclick,
-        ...restProps
     }: {
         class?: string
         active?: boolean
@@ -40,7 +39,6 @@
                       ? "outline"
                       : "ghost"}
                 {onclick}
-                {...restProps}
                 >{label}
             </Button>
         </Tooltip.Trigger>

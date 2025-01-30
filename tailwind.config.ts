@@ -36,6 +36,9 @@ const config: Config = {
                     foreground:
                         "hsl(var(--destructive-foreground) / <alpha-value>)",
                 },
+                warn: {
+                    DEFAULT: "hsl(var(--warn) / <alpha-value>)",
+                },
                 muted: {
                     DEFAULT: "hsl(var(--muted) / <alpha-value>)",
                     foreground: "hsl(var(--muted-foreground) / <alpha-value>)",
@@ -64,7 +67,7 @@ const config: Config = {
                         "hsl(var(--sidebar-accent-foreground))",
                     border: "hsl(var(--sidebar-border))",
                     ring: "hsl(var(--sidebar-ring))",
-                },
+                }
             },
             borderRadius: {
                 xl: "calc(var(--radius) + 4px)",

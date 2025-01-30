@@ -21,6 +21,19 @@
             ]
         },
         "core:webview:allow-set-webview-zoom",
-        "drag:default"
+        "drag:default",
+        "fs:default",
+        "fs:allow-write-text-file",
+        "fs:allow-create",
+        "fs:allow-stat",
+        {
+            "identifier": "fs:scope",
+            "allow": [
+                {
+                    "path": "**"
+                }
+            ]
+        },
+        "dialog:default"
     ]
 }

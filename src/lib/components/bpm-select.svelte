@@ -13,8 +13,7 @@
         bpm = $bindable(),
         min_bpm = $bindable(),
         max_bpm = $bindable(),
-        onsubmit,
-        ...restProps
+        onsubmit
     }: {
         class?: string
         bpm: string | null
@@ -99,7 +98,6 @@
         tabindex={-1}
         onclick={() => inputRef.focus()}
         data-command-input-wrapper=""
-        {...restProps}
     >
         <input
             bind:value={inputText}
@@ -161,14 +159,6 @@
                         type="multiple"
                         bind:value={inputRange}
                         onValueChange={() => {
-                            console.log("valueChange", {
-                                isKeyboardInput,
-                                bpm,
-                                min_bpm,
-                                max_bpm,
-                                inputText,
-                                inputRange,
-                            })
                             if (!isKeyboardInput) {
                                 if (inputRange[0] != inputRange[1]) {
                                     bpm = null

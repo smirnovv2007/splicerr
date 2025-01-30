@@ -14,7 +14,6 @@
         sort,
         order,
         onsort,
-        ...restProps
     }: {
         class?: string
         value: AssetSortType
@@ -22,7 +21,6 @@
         sort: AssetSortType
         order: SortOrder
         onsort: (newSort: AssetSortType) => void
-        restProps?: ButtonProps
     } = $props()
 
     const active = $derived(value == sort)
@@ -37,7 +35,6 @@
             active ? "text-primary" : "text-muted-foreground"
         )}
         onclick={() => onsort(value)}
-        {...restProps}
     >
         <p>{label}</p>
         {#if active}
