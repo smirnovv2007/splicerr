@@ -148,6 +148,7 @@ export function freeDescrambledSample(uuid: string) {
     const existingBlobURL = dataStore.descrambledSamples.get(uuid)
     if (!existingBlobURL) return false
 
+    dataStore.descrambledSamples.delete(uuid)
     window.URL.revokeObjectURL(existingBlobURL)
     console.info("⛓️‍💥 Freed descrambled sample")
 
