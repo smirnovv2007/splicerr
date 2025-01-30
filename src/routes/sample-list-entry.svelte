@@ -17,8 +17,7 @@
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
     import { cn } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
-    import { startDrag } from "@crabnebula/tauri-plugin-drag"
-    import { sanitizePath } from "$lib/shared/files.svelte"
+    import { saveSample } from "$lib/shared/files.svelte"
 
     let {
         class: className,
@@ -63,14 +62,12 @@
     draggable="true"
     onmousedown={() => globalAudio.selectSampleAsset(sampleAsset)}
     ondragstart={() => {
-        console.log("💾 Dragging", sanitizePath(sampleAsset.name))
+        console.log("🫳 Dragging", sampleAsset.name)
+        saveSample(sampleAsset)
         // startDrag({ item: ["/path/to/drag/file"], icon: "/path/to/icon/image" })
     }}
 >
-    <PackPreview
-        src={pack.files[0].url}
-        name={pack.name}
-    />
+    <PackPreview src={pack.files[0].url} name={pack.name} />
     <Button
         variant="ghost"
         class="group flex-shrink-0"

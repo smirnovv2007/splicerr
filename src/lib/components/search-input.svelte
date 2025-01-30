@@ -1,10 +1,13 @@
 <script lang="ts">
-    import { querySplice, SoundsSearchAutocomplete} from "$lib/splice/api"
+    import { querySplice, SoundsSearchAutocomplete } from "$lib/splice/api"
     import Search from "lucide-svelte/icons/search"
     import { Card } from "$lib/components/ui/card"
     import { Button } from "$lib/components/ui/button"
     import { cn } from "$lib/utils"
-    import type { AutocompleteSuggestion, SoundsSearchAutocompleteResponse } from "$lib/splice/types"
+    import type {
+        AutocompleteSuggestion,
+        SoundsSearchAutocompleteResponse,
+    } from "$lib/splice/types"
 
     let {
         value = $bindable(),
@@ -26,7 +29,7 @@
 
     let suggestions = $state<AutocompleteSuggestion[]>([])
 
-    let timer: number
+    let timer: NodeJS.Timeout
     const debounce = (action: () => void, time: number = 200) => {
         clearTimeout(timer)
         timer = setTimeout(() => {
@@ -40,7 +43,7 @@
     }
 </script>
 
-<div class={className}>
+<div class={cn("w-[180px] flex-grow flex-shrink-0", className)}>
     <button
         class={cn(
             "flex items-center border-input border px-3 rounded-md w-full cursor-text gap-2 ring-offset-background focus-within:ring-ring focus:ring-ring h-9 justify-between whitespace-nowrap bg-transparent py-2 text-sm shadow-sm focus-within:outline-none focus:outline-none focus-within:ring-1 focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50",
@@ -102,14 +105,16 @@
                 }
                 querySplice(SoundsSearchAutocomplete, { term: value }).then(
                     (response) => {
-                        suggestions = (response as SoundsSearchAutocompleteResponse).data.soundsSearchSuggestions.results
+                        suggestions = (
+                            response as SoundsSearchAutocompleteResponse
+                        ).data.soundsSearchSuggestions.results
                         lastSuggestionValue = value.trim().toLowerCase()
                         inputRef.selectionStart = inputRef.selectionEnd =
                             value.length
                     }
                 )
             }}
-            class="select-all placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            class="select-all placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 outline-none disabled:cursor-not-allowed disabled:opacity-50 text-sm"
         />
     </button>
     <div class="relative w-full">
@@ -124,7 +129,7 @@
                 {#each suggestions as suggestion, index}
                     <Button
                         class={cn(
-                            "w-full text-left justify-normal font-normal text-base md:text-sm duration-250 h-7",
+                            "w-full text-left justify-normal font-normal text-sm duration-250 h-7",
                             index == selectIndex
                                 ? "bg-accent text-accent-foreground"
                                 : "hover:bg-transparent hover:text-current"
