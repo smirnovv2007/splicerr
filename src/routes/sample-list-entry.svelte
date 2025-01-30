@@ -60,7 +60,7 @@
         className
     )}
     draggable="true"
-    onmousedown={() => globalAudio.selectSampleAsset(sampleAsset)}
+    onmousedown={() => globalAudio.selectSampleAsset(sampleAsset, false)}
     ondragstart={() => {
         console.log("🫳 Dragging", sampleAsset.name)
         saveSample(sampleAsset)

@@ -15,12 +15,15 @@ export const globalAudio = $state({
     toggle() {
         this.paused = !this.paused
     },
-    selectSampleAsset(sampleAsset: SampleAsset) {
+    selectSampleAsset(sampleAsset: SampleAsset, play: boolean = true) {
         if (this.currentAsset?.uuid != sampleAsset.uuid) {
             this.paused = true
+            this.currentTime = 0
+            this.currentAsset = sampleAsset
         }
-        this.currentTime = 0
-        this.currentAsset = sampleAsset
+        if (play) {
+            this.playSampleAsset(sampleAsset)
+        }
     },
     async playSampleAsset(sampleAsset: SampleAsset, from: number = 0) {
         if (loading.samples.has(sampleAsset.uuid)) {
@@ -33,6 +36,6 @@ export const globalAudio = $state({
         this.ref.src = await getDescrambledSampleURL(sampleAsset)
         this.ref.currentTime = from
         this.ref.loop = sampleAsset.asset_category_slug == "loop"
-        this.paused = false
+        this.ref.play()
     },
 })

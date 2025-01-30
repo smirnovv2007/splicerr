@@ -87,6 +87,31 @@
         fetchAssets()
     }
 
+    const gotoPrev = () => {
+        const currentIndex = dataStore.sampleAssets.findIndex(
+            (asset) => asset.uuid === globalAudio.currentAsset?.uuid
+        )
+        if (currentIndex !== -1 && currentIndex - 1 >= 0) {
+            globalAudio.playSampleAsset(
+                dataStore.sampleAssets[currentIndex - 1]
+            )
+        }
+    }
+
+    const gotoNext = () => {
+        const currentIndex = dataStore.sampleAssets.findIndex(
+            (asset) => asset.uuid === globalAudio.currentAsset?.uuid
+        )
+        if (
+            currentIndex !== -1 &&
+            currentIndex + 1 < dataStore.sampleAssets.length
+        ) {
+            globalAudio.playSampleAsset(
+                dataStore.sampleAssets[currentIndex + 1]
+            )
+        }
+    }
+
     // const updateTagSummary = () =>
     //     dataStore.tag_summary.sort(
     //         (a: any, b: any) =>
@@ -235,7 +260,9 @@
                 <div class="w-12 flex-shrink-0 text-xs text-muted-foreground">
                     Pack
                 </div>
-                <div class="w-12 flex-shrink-0 text-xs text-muted-foreground"></div>
+                <div
+                    class="w-12 flex-shrink-0 text-xs text-muted-foreground"
+                ></div>
                 <SortHeader
                     value="name"
                     label="Filename"
@@ -278,6 +305,19 @@
     <ScrollArea
         class="px-4 flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
+        onkeydown={(e) => {
+            if (e.key == "ArrowUp" || e.key == "ArrowDown") {
+                e.preventDefault()
+            }
+            switch (e.key) {
+                case "ArrowUp":
+                    gotoPrev()
+                    break
+                case "ArrowDown":
+                    gotoNext()
+                    break
+            }
+        }}
     >
         <div class="flex flex-col py-2 size-full">
             {#each dataStore.sampleAssets as sampleAsset, index}
@@ -329,29 +369,5 @@
             {/if}
         </div>
     </ScrollArea>
-    <AudioPlayer
-        onprev={() => {
-            const currentIndex = dataStore.sampleAssets.findIndex(
-                (asset) => asset.uuid === globalAudio.currentAsset?.uuid
-            )
-            if (currentIndex !== -1 && currentIndex - 1 >= 0) {
-                globalAudio.playSampleAsset(
-                    dataStore.sampleAssets[currentIndex - 1]
-                )
-            }
-        }}
-        onnext={() => {
-            const currentIndex = dataStore.sampleAssets.findIndex(
-                (asset) => asset.uuid === globalAudio.currentAsset?.uuid
-            )
-            if (
-                currentIndex !== -1 &&
-                currentIndex + 1 < dataStore.sampleAssets.length
-            ) {
-                globalAudio.playSampleAsset(
-                    dataStore.sampleAssets[currentIndex + 1]
-                )
-            }
-        }}
-    />
+    <AudioPlayer onprev={gotoPrev} onnext={gotoNext} />
 </main>
