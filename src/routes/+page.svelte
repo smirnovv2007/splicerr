@@ -306,15 +306,26 @@
         class="px-4 flex-grow before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-4 before:bg-gradient-to-t before:from-transparent before:to-background before:pointer-events-none after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-4 after:bg-gradient-to-b after:from-transparent after:to-background after:pointer-events-none"
         bind:viewportRef
         onkeydown={(e) => {
-            if (e.key == "ArrowUp" || e.key == "ArrowDown") {
-                e.preventDefault()
-            }
             switch (e.key) {
                 case "ArrowUp":
+                    e.preventDefault()
                     gotoPrev()
                     break
                 case "ArrowDown":
+                    e.preventDefault()
                     gotoNext()
+                    break
+                case "ArrowLeft":
+                    e.preventDefault()
+                    gotoPrev()
+                    break
+                case "ArrowRight":
+                    e.preventDefault()
+                    gotoNext()
+                    break
+                case " ":
+                    e.preventDefault()
+                    globalAudio.toggle()
                     break
             }
         }}

@@ -17,7 +17,8 @@
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
     import { cn } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
-    import { saveSample } from "$lib/shared/files.svelte"
+    import { absoluteSamplePath, saveSample } from "$lib/shared/files.svelte"
+    import { startDrag } from "@crabnebula/tauri-plugin-drag"
 
     let {
         class: className,
@@ -51,21 +52,32 @@
         var seconds = Math.floor((millis % 60000) / 1000)
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
     }
+
+    async function handleDrag(event: DragEvent) {
+        event.preventDefault()
+        console.log("🫳 Dragging", sampleAsset.name)
+        try {
+            loading.setCursor(true)
+            const path = await saveSample(sampleAsset)
+            startDrag({ item: [path], icon: "" })
+        } catch (e) {
+            console.error("⚠️ Error dragging", e)
+        } finally {
+            loading.setCursor(false)
+        }
+    }
 </script>
 
 <button
     class={cn(
-        "flex gap-4 items-center justify-between p-1 rounded-lg cursor-grab",
+        "flex gap-4 items-center justify-between p-1 rounded-lg focus:outline-none cursor-grab",
         selected && "bg-muted",
         className
     )}
     draggable="true"
+    tabindex="-1"
     onmousedown={() => globalAudio.selectSampleAsset(sampleAsset, false)}
-    ondragstart={() => {
-        console.log("🫳 Dragging", sampleAsset.name)
-        saveSample(sampleAsset)
-        // startDrag({ item: ["/path/to/drag/file"], icon: "/path/to/icon/image" })
-    }}
+    ondragstart={handleDrag}
 >
     <PackPreview src={pack.files[0].url} name={pack.name} />
     <Button

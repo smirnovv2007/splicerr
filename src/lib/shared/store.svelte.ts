@@ -11,7 +11,7 @@ import type {
 import { loading } from "./loading.svelte"
 import { fetch } from "@tauri-apps/plugin-http"
 
-export const DEFAULT_SORT = "popularity"
+export const DEFAULT_SORT = "relevance"
 export const PER_PAGE = 50
 
 export const randomSeed = () =>

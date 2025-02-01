@@ -93,15 +93,6 @@
                     <audio bind:this={flashbangAudio} src="/flashbang.mp3" preload="auto"
                     ></audio>
                 </div>
-                <div
-                    class={cn(
-                        "flex gap-2 items-center text-warn text-sm",
-                        isSamplesDirValid() && "opacity-0"
-                    )}
-                >
-                    <TriangleAlert size="16" />
-                    Enter a valid path to an existing directory.
-                </div>
             </div>
             <div class="flex flex-col gap-2">
                 <Label for="uiScaleSlider">UI Scale</Label>
