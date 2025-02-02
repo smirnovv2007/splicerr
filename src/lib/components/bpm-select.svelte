@@ -13,7 +13,7 @@
         bpm = $bindable(),
         min_bpm = $bindable(),
         max_bpm = $bindable(),
-        onsubmit
+        onsubmit,
     }: {
         class?: string
         bpm: string | null
@@ -40,9 +40,10 @@
     }
 
     const handleBlur = (event: FocusEvent) => {
+        // TODO: Make slider unfocusable, otherwise we get stuck in the bpm-select
         if (
-            (event.relatedTarget == cardRef ||
-            cardRef.contains(event.relatedTarget as Node)) && event.currentTarget != inputRef
+            event.relatedTarget == cardRef ||
+            cardRef.contains(event.relatedTarget as Node)
         ) {
             inputRef.focus()
         } else {
@@ -131,10 +132,7 @@
             class="select-all w-full h-10 text-sm placeholder:text-transparent focus:placeholder:text-muted-foreground flex rounded-md bg-transparent py-3 outline-none disabled:cursor-not-allowed disabled:opacity-50 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
         <div
-            class={cn(
-                "absolute text-sm pointer-events-none",
-                open && "hidden"
-            )}
+            class={cn("absolute text-sm pointer-events-none", open && "hidden")}
         >
             <span class="text-transparent">{inputText}</span>{inputText
                 ? ""

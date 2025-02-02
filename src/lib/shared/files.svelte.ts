@@ -64,15 +64,11 @@ export async function saveSample(sampleAsset: SampleAsset) {
     for (let i = 0; i < samples.numberOfChannels; i++) {
         const channel = samples.getChannelData(i)
 
-        const start = 1200
+        const start = 1200 // Trimming mp3 silence
         const end = (sampleAsset.duration / 1000) * samples.sampleRate + start
 
         channels.push(channel.subarray(start, end))
     }
-
-    console.log("❓ Buffer", buffer)
-    console.log("❓ Channels", channels)
-    console.log("❓ Samples", samples)
 
     const wavData = encode(channels as any, {
         bitDepth: 16,

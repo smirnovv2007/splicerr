@@ -121,9 +121,9 @@
             </div>
         </div>
         <Dialog.Footer>
-            <div class="text-muted-foreground inline-flex items-center">
+            <div class="text-muted-foreground inline-flex items-center text-nowrap">
                 Made with&nbsp;
-                <ExternalLink to="https://svelte.dev"
+                <ExternalLink to="https://svelte.dev" class="shrink-0"
                     ><img
                         class="size-6 align-middle"
                         src="/svelte.svg"
@@ -131,7 +131,7 @@
                     /></ExternalLink
                 >
                 &nbsp;+&nbsp;
-                <ExternalLink to="https://tauri.app"
+                <ExternalLink to="https://tauri.app" class="shrink-0"
                     ><img
                         class="size-6 align-middle"
                         src="/tauri.svg"
@@ -144,11 +144,11 @@
                     class="text-2xl align-middle">❤️</ExternalLink
                 >
                 &nbsp;by&nbsp;
-                <ExternalLink to="https://github.com/Robert-K"
+                <ExternalLink to="https://github.com/Robert-K" class="text-primary"
                     >Kosro,</ExternalLink
                 >
                 &nbsp;inspired by&nbsp;
-                <ExternalLink to="https://github.com/ascpixi"
+                <ExternalLink to="https://github.com/ascpixi" class="text-primary"
                     >ascpixi</ExternalLink
                 >
             </div>
