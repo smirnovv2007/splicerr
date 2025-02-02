@@ -79,16 +79,24 @@ export const fetchAssets = () => {
                     dataStore.sampleAssets.push(...searchResult.items)
                     console.info("➕ Loaded more assets")
                 } else {
+                    // Free descrambled samples that are not in the new search result / currently selected
                     for (const sampleAsset of dataStore.sampleAssets) {
                         if (
                             !searchResult.items.some(
                                 (other) => sampleAsset.uuid == other.uuid
-                            ) && sampleAsset.uuid != globalAudio.currentAsset?.uuid
+                            ) &&
+                            sampleAsset.uuid != globalAudio.currentAsset?.uuid
                         ) {
                             freeDescrambledSample(sampleAsset.uuid)
                         }
                     }
-                    dataStore.sampleAssets = searchResult.items
+                    // Prevent duplicates
+                    dataStore.sampleAssets = searchResult.items.filter(
+                        (asset) =>
+                            !dataStore.sampleAssets.some(
+                                (other) => other.uuid == asset.uuid
+                            )
+                    )
                     currentQueryIdentity = identityAfterFetch
                     queryStore.page = 1
                     console.info("🔄️ Loaded new assets")

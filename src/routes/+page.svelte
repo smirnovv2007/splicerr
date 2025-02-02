@@ -178,7 +178,7 @@
                     class={cn(
                         "min-w-0 relative",
                         !expandTags &&
-                            "after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:to-background after:pointer-events-none"
+                            "pr-4 after:content-[''] after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-gradient-to-r after:from-transparent after:to-background after:pointer-events-none"
                     )}
                 >
                     <div
