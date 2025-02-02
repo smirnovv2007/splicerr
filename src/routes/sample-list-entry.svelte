@@ -29,6 +29,14 @@
         sampleAsset: SampleAsset
     } = $props()
 
+    let playButtonRef = $state<HTMLButtonElement>(null!)
+
+    $effect(() => {
+        if (selected) {
+            playButtonRef.focus()
+        }
+    })
+
     const pack = $derived(sampleAsset.parents.items[0])
     const name = $derived(sampleAsset.name.split("/").slice(-1))
 
@@ -73,7 +81,8 @@
     <PackPreview {pack} />
     <Button
         variant="ghost"
-        class="group flex-shrink-0"
+        bind:ref={playButtonRef}
+        class="group flex-shrink-0 focus:outline-none"
         size="icon-lg"
         onclick={() =>
             playing
