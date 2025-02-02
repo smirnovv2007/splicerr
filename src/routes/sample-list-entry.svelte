@@ -33,7 +33,7 @@
 
     $effect(() => {
         if (selected) {
-            playButtonRef.focus()
+            playButtonRef.focus({preventScroll: true})
         }
     })
 

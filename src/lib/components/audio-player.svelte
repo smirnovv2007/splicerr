@@ -45,6 +45,7 @@
         bind:volume={globalAudio.volume}
         onloadstart={() => {
             globalAudio.loading = true
+            // TODO: Move into list component
         }}
         oncanplaythrough={() => {
             globalAudio.loading = false
