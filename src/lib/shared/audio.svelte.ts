@@ -1,6 +1,10 @@
 import type { PackAsset, SampleAsset } from "$lib/splice/types"
 import { loading } from "$lib/shared/loading.svelte"
-import { getDescrambledSampleURL } from "$lib/shared/store.svelte"
+import {
+    dataStore,
+    freeDescrambledSample,
+    getDescrambledSampleURL,
+} from "$lib/shared/store.svelte"
 
 export const globalAudio = $state({
     ref: null! as HTMLAudioElement,
@@ -19,6 +23,17 @@ export const globalAudio = $state({
         if (this.currentAsset?.uuid != sampleAsset.uuid) {
             this.paused = true
             this.currentTime = 0
+
+            if (this.currentAsset) {
+                if (
+                    !dataStore.sampleAssets.some(
+                        (other) => this.currentAsset?.uuid == other.uuid
+                    )
+                ) {
+                    freeDescrambledSample(this.currentAsset.uuid)
+                }
+            }
+
             this.currentAsset = sampleAsset
             // this.ref.src = await getDescrambledSampleURL(sampleAsset)
         }
@@ -34,6 +49,17 @@ export const globalAudio = $state({
         }
         this.ref.src = ""
         this.currentTime = 0
+        
+        if (this.currentAsset) {
+            if (
+                !dataStore.sampleAssets.some(
+                    (other) => this.currentAsset?.uuid == other.uuid
+                )
+            ) {
+                freeDescrambledSample(this.currentAsset.uuid)
+            }
+        }
+
         this.currentAsset = sampleAsset
         this.ref.src = await getDescrambledSampleURL(sampleAsset)
         this.ref.currentTime = from

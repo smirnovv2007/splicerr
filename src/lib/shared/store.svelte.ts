@@ -8,6 +8,7 @@ import type {
     SortOrder,
     TagSummaryEntry,
 } from "$lib/splice/types"
+import { globalAudio } from "./audio.svelte"
 import { loading } from "./loading.svelte"
 import { fetch } from "@tauri-apps/plugin-http"
 
@@ -82,7 +83,7 @@ export const fetchAssets = () => {
                         if (
                             !searchResult.items.some(
                                 (other) => sampleAsset.uuid == other.uuid
-                            )
+                            ) && sampleAsset.uuid != globalAudio.currentAsset?.uuid
                         ) {
                             freeDescrambledSample(sampleAsset.uuid)
                         }
