@@ -103,7 +103,7 @@
 </script>
 
 <button
-    class={cn(className, "focus:outline-none")}
+    class={cn(className, "focus:outline-none cursor-grab")}
     use:inview
     tabindex={-1}
     oninview_change={(event) => (isInView = event.detail.inView)}

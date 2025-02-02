@@ -16,11 +16,18 @@
 
     const name = $derived(pack?.name.split("/").slice(-1)[0])
     const imgSrc = $derived(pack?.files[0].url)
+
+    const packURL = $derived(
+        `https://splice.com/sounds/packs/${pack?.permalink_base_url}/${pack?.permalink_slug}`
+    )
 </script>
 
 {#if pack}
     <HoverCard.Root>
-        <HoverCard.Trigger class="flex-shrink-0">
+        <HoverCard.Trigger
+            class="flex-shrink-0"
+            onclick={() => pack && openUrl(packURL)}
+        >
             <img
                 src={imgSrc}
                 alt={name}
@@ -29,7 +36,9 @@
             />
         </HoverCard.Trigger>
         <HoverCard.Content {side} class="flex flex-col justify-center gap-2">
-            <img src={imgSrc} alt={name} class="w-full rounded" />
+            <button onclick={() => pack && openUrl(packURL)}>
+                <img src={imgSrc} alt={name} class="w-full rounded" />
+            </button>
             <p>{name}</p>
         </HoverCard.Content>
     </HoverCard.Root>
