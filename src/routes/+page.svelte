@@ -325,7 +325,7 @@
                     break
                 case " ":
                     e.preventDefault()
-                    globalAudio.toggle()
+                    globalAudio.togglePlay()
                     break
             }
         }}

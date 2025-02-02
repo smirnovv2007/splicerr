@@ -6,18 +6,29 @@ import {
     getDescrambledSampleURL,
 } from "$lib/shared/store.svelte"
 
+let prevVolume = 0.8
+
 export const globalAudio = $state({
     ref: null! as HTMLAudioElement,
-    currentAsset: null as SampleAsset | PackAsset | null, // TODO: selected asset & audio player asset need to be thought through again
+    currentAsset: null as SampleAsset | null, // TODO: selected asset & audio player asset need to be thought through again
     paused: true,
     currentTime: 0,
     duration: 0,
     loading: false,
+    volume: 0.8,
     progress() {
         return this.currentTime / this.duration
     },
-    toggle() {
+    togglePlay() {
         this.paused = !this.paused
+    },
+    toggleMute() {
+        if (this.volume > 0) {
+            prevVolume = this.volume
+            this.volume = 0
+        } else {
+            this.volume = prevVolume
+        }
     },
     async selectSampleAsset(sampleAsset: SampleAsset, play: boolean = true) {
         if (this.currentAsset?.uuid != sampleAsset.uuid) {
@@ -49,7 +60,7 @@ export const globalAudio = $state({
         }
         this.ref.src = ""
         this.currentTime = 0
-        
+
         if (this.currentAsset) {
             if (
                 !dataStore.sampleAssets.some(

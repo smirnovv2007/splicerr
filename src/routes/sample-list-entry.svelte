@@ -9,16 +9,13 @@
     import Play from "lucide-svelte/icons/play"
     import Button from "$lib/components/ui/button/button.svelte"
     import * as Tooltip from "$lib/components/ui/tooltip/index.js"
-    import Settings2 from "lucide-svelte/icons/settings-2"
-    import DiscAlbum from "lucide-svelte/icons/disc-album"
-    import AudioLines from "lucide-svelte/icons/audio-lines"
     import LoaderCircle from "lucide-svelte/icons/loader-circle"
-    import Repeat from "lucide-svelte/icons/repeat"
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
     import { cn } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
-    import { absoluteSamplePath, saveSample } from "$lib/shared/files.svelte"
+    import { saveSample } from "$lib/shared/files.svelte"
     import { startDrag } from "@crabnebula/tauri-plugin-drag"
+    import { assetIcons } from "$lib/shared/icons.svelte"
 
     let {
         class: className,
@@ -34,13 +31,6 @@
 
     const pack = $derived(sampleAsset.parents.items[0])
     const name = $derived(sampleAsset.name.split("/").slice(-1))
-
-    const assetIcons: { [index: string]: any } = {
-        oneshot: AudioLines,
-        loop: Repeat,
-        preset: Settings2,
-        pack: DiscAlbum,
-    }
 
     const formatKey = (key: string) => {
         const upper = key.toUpperCase()
@@ -79,7 +69,7 @@
     onmousedown={() => globalAudio.selectSampleAsset(sampleAsset, false)}
     ondragstart={handleDrag}
 >
-    <PackPreview src={pack.files[0].url} name={pack.name} />
+    <PackPreview {pack} />
     <Button
         variant="ghost"
         class="group flex-shrink-0"
