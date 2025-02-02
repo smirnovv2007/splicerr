@@ -91,10 +91,13 @@
         const currentIndex = dataStore.sampleAssets.findIndex(
             (asset) => asset.uuid === globalAudio.currentAsset?.uuid
         )
-        if (currentIndex !== -1 && currentIndex - 1 >= 0) {
-            globalAudio.playSampleAsset(
-                dataStore.sampleAssets[currentIndex - 1]
+        if (currentIndex > -1) {
+            const sampleAsset = dataStore.sampleAssets[currentIndex - 1]
+            globalAudio.playSampleAsset(sampleAsset)
+            const entryEl = document.getElementById(
+                `sample-list-entry-${sampleAsset.uuid}`
             )
+            if (entryEl) entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
         }
     }
 
@@ -106,9 +109,12 @@
             currentIndex !== -1 &&
             currentIndex + 1 < dataStore.sampleAssets.length
         ) {
-            globalAudio.playSampleAsset(
-                dataStore.sampleAssets[currentIndex + 1]
+            const sampleAsset = dataStore.sampleAssets[currentIndex + 1]
+            globalAudio.playSampleAsset(sampleAsset)
+            const entryEl = document.getElementById(
+                `sample-list-entry-${sampleAsset.uuid}`
             )
+            if (entryEl) entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
         }
     }
 

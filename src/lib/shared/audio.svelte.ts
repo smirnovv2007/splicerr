@@ -73,6 +73,9 @@ export const globalAudio = $state({
 
         this.currentAsset = sampleAsset
         this.ref.src = await getDescrambledSampleURL(sampleAsset)
+        if (this.currentAsset.uuid != sampleAsset.uuid) {
+            return
+        }
         this.ref.currentTime = from
         this.ref.loop = sampleAsset.asset_category_slug == "loop"
         this.ref.play()

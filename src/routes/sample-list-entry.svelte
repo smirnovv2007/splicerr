@@ -64,6 +64,7 @@
         selected && "bg-muted",
         className
     )}
+    id={`sample-list-entry-${sampleAsset.uuid}`}
     draggable="true"
     tabindex="-1"
     onmousedown={() => globalAudio.selectSampleAsset(sampleAsset, false)}
