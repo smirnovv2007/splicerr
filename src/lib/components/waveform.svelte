@@ -8,14 +8,7 @@
 
     const key = `progress-gradient-${uid()}`
 
-    let dragging = false
     let ref = null! as HTMLButtonElement
-    const onmousemove = (event: MouseEvent) => {
-        if (dragging) {
-            const rect = ref.getBoundingClientRect()
-            progress = (event.clientX - rect.left) / rect.width
-        }
-    }
 
     let {
         src,
@@ -120,30 +113,6 @@
         onseek(progress)
     }}
     bind:this={ref}
-    onmousedown={() => {
-        dragging = true
-        document.addEventListener("mousemove", onmousemove)
-        document.addEventListener(
-            "mouseup",
-            (event) => {
-                dragging = false
-                document.removeEventListener("mousemove", onmousemove)
-                const rect = ref.getBoundingClientRect()
-                progress = (event.clientX - rect.left) / rect.width
-                onseek(progress)
-            },
-            {
-                once: true,
-            }
-        )
-    }}
-    onmousemove={(e) => {
-        if (dragging) {
-            const rect = ref.getBoundingClientRect()
-            progress = (e.clientX - rect.left) / rect.width
-            onseek(progress)
-        }
-    }}
     aria-label="Waveform"
 >
     {#if waveform}
