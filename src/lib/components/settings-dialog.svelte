@@ -14,16 +14,17 @@
         config,
         isSamplesDirValid,
         saveConfig,
+        settingsDialog,
         updateTheme,
     } from "$lib/shared/config.svelte"
     import Slider from "$lib/components/ui/slider/slider.svelte"
-    import { open } from "@tauri-apps/plugin-dialog"
+    import { open as openDialog } from "@tauri-apps/plugin-dialog"
     import ThemeSelect from "./theme-select.svelte"
 
     let flashbangAudio = $state<HTMLAudioElement>(null!)
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open={settingsDialog.open}>
     <Dialog.Trigger
         class={cn(
             buttonVariants({ variant: "outline", size: "icon" }),
@@ -56,7 +57,7 @@
                         size="icon"
                         variant="outline"
                         onclick={() => {
-                            open({
+                            openDialog({
                                 multiple: false,
                                 directory: true,
                             }).then((path) => {
@@ -90,7 +91,10 @@
                             saveConfig()
                         }}
                     />
-                    <audio bind:this={flashbangAudio} src="/flashbang.mp3" preload="auto"
+                    <audio
+                        bind:this={flashbangAudio}
+                        src="/flashbang.mp3"
+                        preload="auto"
                     ></audio>
                 </div>
             </div>
@@ -121,7 +125,9 @@
             </div>
         </div>
         <Dialog.Footer>
-            <div class="text-muted-foreground inline-flex items-center text-nowrap">
+            <div
+                class="text-muted-foreground inline-flex items-center text-nowrap"
+            >
                 Made with&nbsp;
                 <ExternalLink to="https://svelte.dev" class="shrink-0"
                     ><img
@@ -144,12 +150,14 @@
                     class="text-2xl align-middle">❤️</ExternalLink
                 >
                 &nbsp;by&nbsp;
-                <ExternalLink to="https://github.com/Robert-K" class="text-primary"
-                    >Kosro,</ExternalLink
+                <ExternalLink
+                    to="https://github.com/Robert-K"
+                    class="text-primary">Kosro,</ExternalLink
                 >
                 &nbsp;inspired by&nbsp;
-                <ExternalLink to="https://github.com/ascpixi" class="text-primary"
-                    >ascpixi</ExternalLink
+                <ExternalLink
+                    to="https://github.com/ascpixi"
+                    class="text-primary">ascpixi</ExternalLink
                 >
             </div>
         </Dialog.Footer>

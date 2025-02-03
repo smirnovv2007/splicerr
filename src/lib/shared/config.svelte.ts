@@ -22,13 +22,15 @@ const DEFAULT_CONFIG = {
 
 let samplesDirValid = $state(false)
 
+export let settingsDialog = $state({ open: false })
+
 export const isSamplesDirValid = () => samplesDirValid
 
 export let config = $state<typeof DEFAULT_CONFIG>(
     JSON.parse(JSON.stringify(DEFAULT_CONFIG))
 )
 
-async function validateSamplesDir() {
+export async function validateSamplesDir() {
     async function validate() {
         if (!config.samples_dir) return false
         if (!(await isAbsolute(config.samples_dir))) return false
@@ -44,6 +46,8 @@ async function validateSamplesDir() {
             ? "✅ Samples Directory valid"
             : "❌ Samples Directory invalid"
     )
+
+    return samplesDirValid
 }
 
 export async function loadConfig() {
