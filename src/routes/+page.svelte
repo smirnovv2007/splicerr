@@ -30,6 +30,7 @@
         randomSeed,
     } from "$lib/shared/store.svelte"
     import SettingsDialog from "$lib/components/settings-dialog.svelte"
+    import KeySelect from "$lib/components/key-select.svelte"
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
     // const instrumentTags = $derived(() =>
@@ -97,7 +98,8 @@
             const entryEl = document.getElementById(
                 `sample-list-entry-${sampleAsset.uuid}`
             )
-            if (entryEl) entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
+            if (entryEl)
+                entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
         }
     }
 
@@ -114,7 +116,8 @@
             const entryEl = document.getElementById(
                 `sample-list-entry-${sampleAsset.uuid}`
             )
-            if (entryEl) entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
+            if (entryEl)
+                entryEl.scrollIntoView({ behavior: "smooth", block: "nearest" })
         }
     }
 
@@ -153,6 +156,11 @@
                 onsubmit={fetchAssets}
                 class="flex-grow"
                 bind:inputRef={searchInputRef}
+            />
+            <KeySelect
+                bind:key={queryStore.key}
+                bind:chord_type={queryStore.chord_type}
+                onselect={fetchAssets}
             />
             <BpmSelect
                 bind:bpm={queryStore.bpm}

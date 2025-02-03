@@ -11,7 +11,7 @@
     import * as Tooltip from "$lib/components/ui/tooltip/index.js"
     import LoaderCircle from "lucide-svelte/icons/loader-circle"
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
-    import { cn } from "$lib/utils"
+    import { cn, formatKey } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
     import { saveSample } from "$lib/shared/files.svelte"
     import { startDrag } from "@crabnebula/tauri-plugin-drag"
@@ -39,11 +39,6 @@
 
     const pack = $derived(sampleAsset.parents.items[0])
     const name = $derived(sampleAsset.name.split("/").slice(-1))
-
-    const formatKey = (key: string) => {
-        const upper = key.toUpperCase()
-        return upper + (key != upper ? " min" : "")
-    }
 
     const millisToMinutesAndSeconds = (millis: number) => {
         var minutes = Math.floor(millis / 60000)

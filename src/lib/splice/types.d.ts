@@ -115,3 +115,7 @@ export type AssetSortType =
 export type AssetTypeSlug = "sample" | "preset" | "pack"
 
 export type AssetCategorySlug = "loop" | "oneshot"
+
+export type Key = (typeof keys)[number]
+
+export type ChordType = (typeof chordTypes)[number]

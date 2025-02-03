@@ -3,6 +3,8 @@ import { descrambleSample } from "$lib/splice/descrambler"
 import type {
     AssetCategorySlug,
     AssetSortType,
+    ChordType,
+    Key,
     SampleAsset,
     SamplesSearchResponse,
     SortOrder,
@@ -26,6 +28,22 @@ export const dataStore = $state({
     total_records: 0,
 })
 
+export const keys = [
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B",
+] as const
+export const chord_types = ["major", "minor"]
+
 export const queryStore = $state({
     query: "",
     sort: DEFAULT_SORT as AssetSortType,
@@ -36,6 +54,8 @@ export const queryStore = $state({
     bpm: null as string | null,
     min_bpm: null as number | null,
     max_bpm: null as number | null,
+    key: null as Key | null,
+    chord_type: null as ChordType | null,
 })
 
 // The query identity is the part of the query that uniquely identifies the returned data
@@ -50,6 +70,8 @@ const queryIdentity = $derived({
     bpm: queryStore.bpm?.toString(),
     min_bpm: queryStore.min_bpm,
     max_bpm: queryStore.max_bpm,
+    key: queryStore.key,
+    chord_type: queryStore.chord_type,
 })
 
 export const storeCallbacks = $state({

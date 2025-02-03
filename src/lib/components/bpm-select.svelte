@@ -138,7 +138,7 @@
                 ? ""
                 : "Any"} BPM
         </div>
-        <ChevronDown class="mr-2 size-4 shrink-0 text-muted-foreground" />
+        <ChevronDown class="size-4 shrink-0 text-muted-foreground" />
     </button>
     <div class="relative w-full">
         <div class="absolute top-2 z-10 w-full">
