@@ -6,6 +6,11 @@ It's basically a full rewrite of [ascpixi's](https://github.com/ascpixi) [Splice
 
 Please show your appreciation by starring ⭐ the [original project](https://github.com/ascpixi/splicedd), as it made this all possible.
 
+<p align="center">
+  <br>
+  <a href="https://github.com/robert-k/splicerr/releases/"><b>Click here to download the latest release!</b></a>
+</p>
+
 ## Demo
 
 https://github.com/user-attachments/assets/34f1ba90-c881-4a04-a5df-c147bdb51c2c
