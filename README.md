@@ -4,7 +4,7 @@
 
 It's basically a full rewrite of [ascpixi's](https://github.com/ascpixi) [Splicedd ❤️](https://github.com/ascpixi/splicedd), just with a couple more features and built with [Svelte](https://svelte.dev/) and [Tauri 2.0](https://v2.tauri.app/).
 
-Please show your appreciation by starring ⭐ the original project, as it made this all possible.
+Please show your appreciation by starring ⭐ the [original project](https://github.com/ascpixi/splicedd), as it made this all possible.
 
 ## Demo
 
