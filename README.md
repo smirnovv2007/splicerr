@@ -8,7 +8,7 @@ Please show your appreciation by starring ⭐ the original project, as it made t
 
 ## Demo
 
-![Demo Video](etc/demo.mp4)
+https://github.com/user-attachments/assets/34f1ba90-c881-4a04-a5df-c147bdb51c2c
 
 ## Features
 
