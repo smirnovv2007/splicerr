@@ -33,7 +33,7 @@
 
     $effect(() => {
         if (selected) {
-            playButtonRef.focus({preventScroll: true})
+            playButtonRef.focus({ preventScroll: true })
         }
     })
 
@@ -153,7 +153,9 @@
         {millisToMinutesAndSeconds(sampleAsset.duration)}
     </div>
     <div class="text-muted-foreground flex-shrink-0 w-14 flex-grow">
-        {(sampleAsset.key && formatKey(sampleAsset.key)) ?? "--"}
+        {(sampleAsset.key &&
+            formatKey(sampleAsset.key, sampleAsset.chord_type)) ??
+            "--"}
     </div>
     <div class="text-muted-foreground flex-shrink-0 w-14 flex-grow">
         {sampleAsset.bpm ?? "--"}

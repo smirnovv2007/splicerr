@@ -19,27 +19,32 @@
         onselect: () => void
     } = $props()
 
-    const options = keys
-        .map((k) => ({
-            key: k,
-            chord_type: "major",
-            label: formatKey(k),
-        }))
-        .concat(
-            keys.map((k) => ({
+    const options: { key: Key; chord_type: ChordType | null; label: string }[] =
+        [
+            ...keys.map((k) => ({
+                key: k,
+                chord_type: null,
+                label: formatKey(k),
+            })),
+            ...keys.map((k) => ({
+                key: k,
+                chord_type: "major",
+                label: formatKey(k, "major"),
+            })),
+            ...keys.map((k) => ({
                 key: k,
                 chord_type: "minor",
-                label: formatKey(k.toLowerCase()),
-            }))
-        )
-
-    console.log(options)
+                label: formatKey(k, "minor"),
+            })),
+        ]
 
     let open = $state(false)
     let triggerRef = $state<HTMLButtonElement>(null!)
 
     const selectedValue = $derived(
-        options.find((option) => option.key === key)?.label
+        options.find(
+            (option) => option.key === key && option.chord_type == chord_type
+        )?.label
     )
 
     function closeAndFocusTrigger() {
