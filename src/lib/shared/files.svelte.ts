@@ -8,7 +8,7 @@ import { Buffer } from "buffer"
 
 globalThis.Buffer = Buffer // node-wav needs Buffer which is not defined when using Vite
 
-const sanitizePath = (path: string) => path.replace(/[^a-zA-Z0-9_\-\.\/]/g, "_")
+const sanitizePath = (path: string) => path.replace(/[^a-zA-Z0-9#_\-\.\/]/g, "_")
 
 const sampleAssetPath = (sampleAsset: SampleAsset) =>
     sanitizePath(`${sampleAsset.parents.items[0].name}/${sampleAsset.name}`)
