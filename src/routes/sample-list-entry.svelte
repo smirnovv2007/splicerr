@@ -13,9 +13,8 @@
     import { dataStore, fetchAssets } from "$lib/shared/store.svelte"
     import { cn, formatKey } from "$lib/utils"
     import { loading } from "$lib/shared/loading.svelte"
-    import { saveSample } from "$lib/shared/files.svelte"
-    import { startDrag } from "@crabnebula/tauri-plugin-drag"
     import { assetIcons } from "$lib/shared/icons.svelte"
+    import {handleSampleDrag} from "$lib/shared/drag.svelte"
 
     let {
         class: className,
@@ -45,20 +44,6 @@
         var seconds = Math.floor((millis % 60000) / 1000)
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds
     }
-
-    async function handleDrag(event: DragEvent) {
-        event.preventDefault()
-        console.log("🫳 Dragging", sampleAsset.name)
-        try {
-            loading.setCursor(true)
-            const path = await saveSample(sampleAsset)
-            startDrag({ item: [path], icon: "" })
-        } catch (e) {
-            console.error("⚠️ Error dragging", e)
-        } finally {
-            loading.setCursor(false)
-        }
-    }
 </script>
 
 <button
@@ -71,7 +56,7 @@
     draggable="true"
     tabindex="-1"
     onmousedown={() => globalAudio.selectSampleAsset(sampleAsset, false)}
-    ondragstart={handleDrag}
+    ondragstart={(event) => handleSampleDrag(event, sampleAsset)}
 >
     <PackPreview {pack} />
     <Button

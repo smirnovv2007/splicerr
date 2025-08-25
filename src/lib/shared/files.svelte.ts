@@ -87,3 +87,49 @@ export async function saveSample(sampleAsset: SampleAsset) {
 
     return absolutePath
 }
+
+export async function absolutePackImagePath(sampleAsset: SampleAsset) {
+    if (!config.samples_dir) {
+        throw new Error("❌ Samples Directory not set")
+    }
+
+    if (!isSamplesDirValid()) {
+        throw new Error("❌ Samples Directory invalid")
+    }
+
+    const pack = sampleAsset.parents.items[0]
+    const packDir = sanitizePath(pack.name)
+    return await join(config.samples_dir, packDir, "cover.jpg")
+}
+
+export async function savePackImage(sampleAsset: SampleAsset) {
+    const pack = sampleAsset.parents.items[0]
+    const packImageUrl = pack?.files[0].url
+
+    const absolutePath = await absolutePackImagePath(sampleAsset)
+
+    if (!absolutePath) {
+        throw new Error("❌ Invalid path")
+    }
+
+    if (await exists(absolutePath)) {
+        console.log("🗃️ Image already exists at", absolutePath)
+        return absolutePath
+    }
+
+    const response = await fetch(packImageUrl)
+    const buffer = await response.arrayBuffer()
+
+    console.log("🖼️ Saving pack image at", absolutePath)
+
+    await ensureFileDirectoryExists(absolutePath)
+
+    const file = await create(absolutePath)
+    await file.write(new Uint8Array(buffer))
+    await file.close()
+
+    console.log("🎉 Pack image saved!")
+
+    return absolutePath
+}
+
