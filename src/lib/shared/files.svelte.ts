@@ -117,19 +117,28 @@ export async function savePackImage(sampleAsset: SampleAsset) {
         return absolutePath
     }
 
-    const response = await fetch(packImageUrl)
-    const buffer = await response.arrayBuffer()
+    try {
+        const response = await fetch(packImageUrl)
+        if (!response.ok) throw new Error("Failed to fetch image")
+        const buffer = await response.arrayBuffer()
 
-    console.log("🖼️ Saving pack image at", absolutePath)
+        console.log("🖼️ Saving pack image at", absolutePath)
 
-    await ensureFileDirectoryExists(absolutePath)
+        await ensureFileDirectoryExists(absolutePath)
 
-    const file = await create(absolutePath)
-    await file.write(new Uint8Array(buffer))
-    await file.close()
+        const file = await create(absolutePath)
+        await file.write(new Uint8Array(buffer))
+        await file.close()
 
-    console.log("🎉 Pack image saved!")
+        console.log("🎉 Pack image saved!")
 
-    return absolutePath
+        return absolutePath
+    } catch (e: any) {
+        if (e instanceof TypeError && e.message.includes("Failed to fetch")) {
+            console.warn("⚠️ CORS error or network issue when fetching pack image", e)
+            return null
+        }
+        throw e
+    }
 }
 

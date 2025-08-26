@@ -108,7 +108,7 @@ export async function handleSampleDrag(event: DragEvent, sampleAsset: SampleAsse
         const packImagePath = await savePackImage(sampleAsset)
 
         // Check if the image exists and use it, otherwise fallback to invisible icon
-        if (await exists(packImagePath)) {
+        if (packImagePath && await exists(packImagePath)) {
             iconPath = await createDragIcon(packImagePath, pack.uuid)
         } else {
             iconPath = await createInvisibleIcon()
