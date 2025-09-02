@@ -1,6 +1,6 @@
 {
   "name": "splicerr",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "type": "module",
   "scripts": {
@@ -19,6 +19,7 @@
     "@tauri-apps/plugin-fs": "~2",
     "@tauri-apps/plugin-http": "~2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-window-state": "~2.4.0",
     "@types/node-wav": "^0.0.3",
     "buffer": "^6.0.3",
     "mode-watcher": "^0.5.1",
