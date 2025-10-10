@@ -63,11 +63,17 @@ export async function saveSample(sampleAsset: SampleAsset) {
 
     for (let i = 0; i < samples.numberOfChannels; i++) {
         const channel = samples.getChannelData(i)
-
-        const start = 1200 // Trimming mp3 silence
+        
+        // Calculate 12ms in samples based on the actual sample rate
+        const trimSamples = config.cut_mp3_delay ? Math.floor(samples.sampleRate * 0.012) : 0
+        
+        const start = trimSamples
         const end = (sampleAsset.duration / 1000) * samples.sampleRate + start
-
-        channels.push(channel.subarray(start, end))
+        
+        // Make sure we don't try to slice beyond the available data
+        const safeEnd = Math.min(end, channel.length)
+        
+        channels.push(channel.subarray(start, safeEnd))
     }
 
     const wavData = encode(channels as any, {
