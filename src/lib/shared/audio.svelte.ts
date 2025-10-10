@@ -1,5 +1,6 @@
 import type { PackAsset, SampleAsset } from "$lib/splice/types"
 import { loading } from "$lib/shared/loading.svelte"
+import { config } from "$lib/shared/config.svelte"
 import {
     dataStore,
     freeDescrambledSample,
@@ -77,7 +78,7 @@ export const globalAudio = $state({
             return
         }
         this.ref.currentTime = from
-        this.ref.loop = sampleAsset.asset_category_slug == "loop"
+        this.ref.loop = sampleAsset.asset_category_slug == "loop" && config.repeat_audio
         this.ref.play()
     },
 })

@@ -19,6 +19,7 @@ const DEFAULT_CONFIG = {
     ui_theme: "system" as UITheme,
     ui_scale: 1,
     cut_mp3_delay: true,
+    repeat_audio: true,
 }
 
 let samplesDirValid = $state(false)

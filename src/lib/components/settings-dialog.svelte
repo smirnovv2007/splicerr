@@ -143,6 +143,25 @@
                     </Label>
                 </div>
             </div>
+            <div class="flex flex-col gap-2">
+                <Label for="repeatAudioToggle">Repeat Audio</Label>
+                <p class="text-muted-foreground text-sm">
+                    When enabled, audio will repeat after finishing.
+                </p>
+                <div class="flex items-center gap-2">
+                    <Switch
+                        id="repeatAudioToggle"
+                        bind:checked={config.repeat_audio}
+                        onchange={() => {
+                            config.repeat_audio = !config.repeat_audio
+                            saveConfig()
+                        }}
+                    />
+                    <Label for="repeatAudioToggle" class="cursor-pointer">
+                        {config.repeat_audio ? "Enabled" : "Disabled"}
+                    </Label>
+                </div>
+            </div>
         </div>
         <Dialog.Footer>
             <div
