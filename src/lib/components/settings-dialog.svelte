@@ -20,6 +20,7 @@
     import Slider from "$lib/components/ui/slider/slider.svelte"
     import { open as openDialog } from "@tauri-apps/plugin-dialog"
     import ThemeSelect from "./theme-select.svelte"
+    import Switch from "$lib/components/ui/switch/switch.svelte"
 
     let flashbangAudio = $state<HTMLAudioElement>(null!)
 </script>
@@ -121,6 +122,44 @@
                     >
                         <Undo2 />
                     </Button>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <Label for="mp3DelayToggle">MP3 Delay Correction</Label>
+                <p class="text-muted-foreground text-sm">
+                    Cut 12ms from the start of MP3 files to correct for encoder delay.
+                </p>
+                <div class="flex items-center gap-2">
+                    <Switch
+                        id="mp3DelayToggle"
+                        bind:checked={config.cut_mp3_delay}
+                        onchange={() => {
+                            config.cut_mp3_delay = !config.cut_mp3_delay
+                            saveConfig()
+                        }}
+                    />
+                    <Label for="mp3DelayToggle" class="cursor-pointer">
+                        {config.cut_mp3_delay ? "Enabled" : "Disabled"}
+                    </Label>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2">
+                <Label for="repeatAudioToggle">Repeat Audio</Label>
+                <p class="text-muted-foreground text-sm">
+                    When enabled, audio will repeat after finishing.
+                </p>
+                <div class="flex items-center gap-2">
+                    <Switch
+                        id="repeatAudioToggle"
+                        bind:checked={config.repeat_audio}
+                        onchange={() => {
+                            config.repeat_audio = !config.repeat_audio
+                            saveConfig()
+                        }}
+                    />
+                    <Label for="repeatAudioToggle" class="cursor-pointer">
+                        {config.repeat_audio ? "Enabled" : "Disabled"}
+                    </Label>
                 </div>
             </div>
         </div>
