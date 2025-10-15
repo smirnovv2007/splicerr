@@ -40,7 +40,7 @@
             <div class="flex flex-col gap-2">
                 <Label for="fileInput">Samples Directory</Label>
                 <p class="text-muted-foreground text-sm">
-                    This is where Splicerr will place the Packs & Samples you
+                    This is where Splice will place the Packs & Samples you
                     download.
                 </p>
                 <div class="flex gap-2">
@@ -148,10 +148,10 @@
             <div
                 class="text-muted-foreground inline-flex items-center text-nowrap"
             >
-                Здесь может быть любой текст&nbsp;
+                Тут будет информация о лицензии&nbsp;
                 <ExternalLink
                     to="https://t.me/imkotok"
-                    class="text-primary">и ссылки</ExternalLink
+                    class="text-primary">и кнопка</ExternalLink
                 >
             </div>
         </Dialog.Footer>
