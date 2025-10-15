@@ -36,6 +36,7 @@
                 }
             ]
         },
-        "dialog:default"
+        "dialog:default",
+        "keygen-rs2:default"
     ]
 }
