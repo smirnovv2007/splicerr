@@ -373,8 +373,8 @@
                         <Button onclick={fetchAssets}>Retry</Button>
                     {:else if loading.beforeFirstLoad}
                         <Smile size="48" />
-                        <p class="font-bold text-xl">Hey there!</p>
-                        <p class="text-sm">Make some cool music, will ya?</p>
+                        <p class="font-bold text-xl">Loading...</p>
+                        <p class="text-sm">Please wait</p>
                     {:else}
                         <Search size="48" />
                         <p class="font-bold text-xl">No results</p>
