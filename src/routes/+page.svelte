@@ -5,7 +5,7 @@
     import { onMount, tick } from "svelte"
     import SortSelect from "$lib/components/sort-select.svelte"
     import Search from "lucide-svelte/icons/search"
-    import Smile from "lucide-svelte/icons/smile"
+    import Loader from "lucide-svelte/icons/loader"
     import Ghost from "lucide-svelte/icons/ghost"
     import Shuffle from "lucide-svelte/icons/shuffle"
     import Button from "$lib/components/ui/button/button.svelte"
@@ -372,7 +372,7 @@
                         <p class="text-sm">Couldn't load any samples</p>
                         <Button onclick={fetchAssets}>Retry</Button>
                     {:else if loading.beforeFirstLoad}
-                        <Smile size="48" />
+                        <Loader size="48" />
                         <p class="font-bold text-xl">Loading...</p>
                         <p class="text-sm">Please wait</p>
                     {:else}
