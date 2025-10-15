@@ -5,15 +5,7 @@ pub fn run() {
     let api_url = "https://api.keygen.sh/v1".to_string();
     let account = "7dd25d88-6069-4255-a2d7-aaa513bf0782".to_string();
     let product = "bc6e752c-10e6-43be-b9cd-04a2fa64b583".to_string();
-    let public_key = "-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxJaZ0va8ozVeUjSCkhqP
-OMMoSBt+dZyx03uS/UMYxAGBCYIQC63Bs1/FEX+ri+FdFjCbcx55UaAhQWLWbCmR
-pdaiwGkH9EUZ6l+2BSkeGR+zj961TASITpbbP8N9599ywQTRtAM+G35HwXjmgzca
-cDbyF1G2EF728WFQdAfndHxAKVYmaxAsze18Z9sOrYfdV0tu/dcMwyKyZE52GJcI
-GCwGRmBPxTo5eDgtWOesfgM0d3bneD/M7OgBMMa4gXNZ+w6EKYHJgw0LL7NYNTG2
-RBQZf0J/o/ZqrT+BjEkfvgQcAPHUe1n8VZ7ewQb3oY2SPSC4i426GeK9zZn+pSrj
-OQIDAQAB
------END PUBLIC KEY-----".to_string();
+    let public_key = "5b39a60a087a8967a127a2337fa8926409c80d504647e5a470a4e1a0327605bb".to_string();
 
     tauri::Builder::default()
         .plugin(
