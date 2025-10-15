@@ -1,6 +1,6 @@
 {
     "$schema": "https://schema.tauri.app/config/2",
-    "productName": "Splicerr",
+    "productName": "Splice",
     "version": "../package.json",
     "identifier": "de.kosro.splicerr",
     "build": {
@@ -12,7 +12,7 @@
     "app": {
         "windows": [
             {
-                "title": "Splicerr",
+                "title": "Splice",
                 "width": 800,
                 "height": 600
             }
