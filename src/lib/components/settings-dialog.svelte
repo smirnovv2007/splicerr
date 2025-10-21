@@ -144,16 +144,5 @@
                 </div>
             </div>
         </div>
-        <Dialog.Footer>
-            <div
-                class="text-muted-foreground inline-flex items-center text-nowrap"
-            >
-                Тут будет информация о лицензии&nbsp;
-                <ExternalLink
-                    to="https://t.me/imkotok"
-                    class="text-primary">и кнопка</ExternalLink
-                >
-            </div>
-        </Dialog.Footer>
     </Dialog.Content>
 </Dialog.Root>
