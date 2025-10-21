@@ -47,9 +47,6 @@ importers:
       svelte-inview:
         specifier: ^4.0.4
         version: 4.0.4(svelte@5.19.3)
-      tauri-plugin-keygen-rs2-api:
-        specifier: ^0.2.4
-        version: 0.2.4
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.6
