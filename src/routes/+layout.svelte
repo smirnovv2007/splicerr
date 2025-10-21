@@ -7,6 +7,7 @@
         isSamplesDirValid,
         loadConfig,
         settingsDialog,
+        licenseDialog
     } from "$lib/shared/config.svelte"
     import { onMount } from "svelte"
 
@@ -20,7 +21,9 @@
 
     onMount(() =>
         loadConfig().then(() => {
-            if (!isSamplesDirValid()) {
+            if (!isActivationKeyValid()) {
+                licenseDialog.open = true
+            } else if (!isSamplesDirValid()) {
                 settingsDialog.open = true
             }
         })
