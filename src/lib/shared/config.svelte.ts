@@ -30,7 +30,7 @@ let activationKeyValid = $state(false)
 
 export let settingsDialog = $state({ open: false })
 
-export let licenseDialog = $state({ open: (!config.activated) })
+export let licenseDialog = $state({ open: false })
 
 export const isSamplesDirValid = () => samplesDirValid
 
