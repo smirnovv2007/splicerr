@@ -1,38 +1,6 @@
-use tauri_plugin_keygen_rs2::AppHandleExt;
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let api_url = "https://api.keygen.sh/v1".to_string();
-    let account = "7dd25d88-6069-4255-a2d7-aaa513bf0782".to_string();
-    let product = "bc6e752c-10e6-43be-b9cd-04a2fa64b583".to_string();
-    let public_key = "5b39a60a087a8967a127a2337fa8926409c80d504647e5a470a4e1a0327605bb".to_string();
-
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_keygen_rs2::Builder::new(account, product, public_key)
-                .api_url(api_url)
-                .build(),
-        )
-        .setup(|app| {
-            let app_handle = app.handle();
-
-            tauri::async_runtime::block_on(async move {
-                let license_state = app_handle.get_license_state();
-                let license_state = license_state.lock().await;
-                println!("License: {:?}", license_state.license);
-                println!("Included: {:?}", license_state.included);
-
-                let machine_state = app_handle.get_machine_state();
-                let machine_state = machine_state.lock().await;
-                println!("Machine: {:?}", machine_state);
-
-                tauri_plugin_keygen_rs2::add_license_listener(|state| {
-                    println!("License state change: {:?}", state);
-                })
-                .await;
-            });
-            Ok(())
-        })
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
