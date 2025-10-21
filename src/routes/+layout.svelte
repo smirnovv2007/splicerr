@@ -5,6 +5,7 @@
     import {
         config,
         isSamplesDirValid,
+        isActivationKeyValid,
         loadConfig,
         settingsDialog,
         licenseDialog
