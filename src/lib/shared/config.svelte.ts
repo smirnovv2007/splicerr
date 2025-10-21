@@ -20,16 +20,21 @@ const DEFAULT_CONFIG = {
     ui_scale: 1,
     cut_mp3_delay: true,
     repeat_audio: true,
+    activation_key: null as string | null,
     activated: false
 }
 
 let samplesDirValid = $state(false)
+
+let activationKeyValid = $state(false)
 
 export let settingsDialog = $state({ open: false })
 
 export let licenseDialog = $state({ open: (!config.activated) })
 
 export const isSamplesDirValid = () => samplesDirValid
+
+export const isActivationKeyValid = () => activationKeyValid
 
 export let config = $state<typeof DEFAULT_CONFIG>(
     JSON.parse(JSON.stringify(DEFAULT_CONFIG))
@@ -55,6 +60,22 @@ export async function validateSamplesDir() {
     return samplesDirValid
 }
 
+export async function validateActivationKey() {
+    async function validate() {
+        return false
+    }
+
+    activationKeyValid = await validate()
+
+    console.log(
+        activationKeyValid
+            ? "✅ Activation key valid"
+            : "❌ Activation key invalid"
+    )
+
+    return activationKeyValid
+}
+
 export async function loadConfig() {
     if (
         !(await exists(CONFIG_FILE_NAME, { baseDir: BaseDirectory.AppConfig }))
@@ -69,6 +90,18 @@ export async function loadConfig() {
     }
 
     await validateSamplesDir()
+}
+
+export async function activate() {
+    if (
+        (await validateActivationKey())
+    ) {
+        config.activated = true
+        await saveConfig()
+        return true
+    } else {
+        return false
+    }
 }
 
 export async function saveConfig() {
