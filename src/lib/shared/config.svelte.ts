@@ -20,11 +20,14 @@ const DEFAULT_CONFIG = {
     ui_scale: 1,
     cut_mp3_delay: true,
     repeat_audio: true,
+    activated: false
 }
 
 let samplesDirValid = $state(false)
 
 export let settingsDialog = $state({ open: false })
+
+export let licenseDialog = $state({ open: (!config.activated) })
 
 export const isSamplesDirValid = () => samplesDirValid
 
