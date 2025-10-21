@@ -30,6 +30,7 @@
         randomSeed,
     } from "$lib/shared/store.svelte"
     import SettingsDialog from "$lib/components/settings-dialog.svelte"
+    import LicenseDialog from "$lib/components/license-dialog.svelte"
     import KeySelect from "$lib/components/key-select.svelte"
 
     // TODO: Taxonomy comboboxes (maybe just pass all tags to each)
@@ -150,6 +151,7 @@
 <main class="flex flex-col size-full">
     <div class="flex flex-col p-4 gap-4">
         <div class="flex gap-4 justify-between items-center">
+            <LicenseDialog />
             <SettingsDialog />
             <SearchInput
                 bind:value={queryStore.query}
