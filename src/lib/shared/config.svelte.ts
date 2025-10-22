@@ -9,7 +9,7 @@ import {
     stat,
 } from "@tauri-apps/plugin-fs"
 import { resetMode, setMode } from "mode-watcher"
-import { sha256 } from "js-sha256"
+import { md5 } from 'js-md5';
 
 const CONFIG_FILE_NAME = "config.json"
 
@@ -75,7 +75,7 @@ export async function validateActivationKey() {
         const yyyy = String(now.getFullYear())
         const dateStr = `${dd}.${mm}.${yyyy}`
 
-        const expected = sha256(dateStr)
+        const expected = md5(dateStr)
         
         return config.activation_key.toLowerCase() === expected.toLowerCase()
     }
