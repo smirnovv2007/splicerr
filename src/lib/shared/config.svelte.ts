@@ -29,7 +29,7 @@ let samplesDirValid = $state(false)
 
 let activationKeyValid = $state(false)
 
-let activationFailed = $state(false)
+let activationFailed = $state(true)
 
 export let settingsDialog = $state({ open: false })
 
@@ -118,7 +118,7 @@ export async function activate() {
         settingsDialog.open = true
         return true
     } else {
-        activationFailed = true
+        activationFailed = false
         return false
     }
 }
