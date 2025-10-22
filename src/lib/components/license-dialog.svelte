@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as Dialog from "$lib/components/ui/dialog"
+    import * as Dialog from "$lib/components/ui/unclosable-dialog"
     import { buttonVariants } from "$lib/components/ui/button/index.js"
     import { cn } from "$lib/utils"
     import Input from "$lib/components/ui/input/input.svelte"
