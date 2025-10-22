@@ -29,6 +29,8 @@ let samplesDirValid = $state(false)
 
 let activationKeyValid = $state(false)
 
+let activationFailed = $state(false)
+
 export let settingsDialog = $state({ open: false })
 
 export let licenseDialog = $state({ open: false })
@@ -36,6 +38,8 @@ export let licenseDialog = $state({ open: false })
 export const isSamplesDirValid = () => samplesDirValid
 
 export const isActivationKeyValid = () => activationKeyValid
+
+export const isActivationFailed = () => activationFailed
 
 export let config = $state<typeof DEFAULT_CONFIG>(
     JSON.parse(JSON.stringify(DEFAULT_CONFIG))
@@ -111,8 +115,10 @@ export async function activate() {
         config.activated = true
         await saveConfig()
         licenseDialog.open = false
+        settingsDialog.open = true
         return true
     } else {
+        activationFailed = true
         return false
     }
 }
