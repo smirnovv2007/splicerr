@@ -110,7 +110,7 @@ export async function activate() {
     ) {
         config.activated = true
         await saveConfig()
-        licenseDialog = { ...licenseDialog, open: false }
+        licenseDialog.open = false
         return true
     } else {
         return false
