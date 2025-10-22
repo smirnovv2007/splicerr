@@ -22,7 +22,7 @@
 
     onMount(() =>
         loadConfig().then(() => {
-            if (!isActivationKeyValid()) {
+            if (!config.activated) {
                 licenseDialog.open = true
             } else if (!isSamplesDirValid()) {
                 settingsDialog.open = true
