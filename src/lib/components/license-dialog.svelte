@@ -17,7 +17,7 @@
 </script>
 
 <Dialog.Root bind:open={licenseDialog.open}>
-    <Dialog.Content>
+    <Dialog.Content escapeKeydownBehavior="ignore" interactOutsideBehavior="ignore">
         <Dialog.Header>
             <Dialog.Title>Activation</Dialog.Title>
         </Dialog.Header>
@@ -50,7 +50,7 @@
                     )}
                 >
                     <TriangleAlert size="16" />
-                    Invalid activation code
+                    Invalid activation key
                 </div>
             </div>
         </div>
