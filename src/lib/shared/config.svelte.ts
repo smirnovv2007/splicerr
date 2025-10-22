@@ -9,6 +9,7 @@ import {
     stat,
 } from "@tauri-apps/plugin-fs"
 import { resetMode, setMode } from "mode-watcher"
+import { sha256 } from "js-sha256"
 
 const CONFIG_FILE_NAME = "config.json"
 
@@ -62,7 +63,17 @@ export async function validateSamplesDir() {
 
 export async function validateActivationKey() {
     async function validate() {
-        return false
+        if (!config.activation_key) return false
+        
+        const now = new Date()
+        const dd = String(now.getDate()).padStart(2, "0")
+        const mm = String(now.getMonth() + 1).padStart(2, "0")
+        const yyyy = String(now.getFullYear())
+        const dateStr = `${dd}.${mm}.${yyyy}`
+
+        const expected = sha256(dateStr)
+        
+        return config.activation_key.toLowerCase() === expected.toLowerCase()
     }
 
     activationKeyValid = await validate()
@@ -86,6 +97,7 @@ export async function loadConfig() {
             baseDir: BaseDirectory.AppConfig,
         })
         Object.assign(config, JSON.parse(fileContent))
+        config.activation_key = null as string
         console.log("📂 Config loaded")
     }
 
@@ -98,6 +110,7 @@ export async function activate() {
     ) {
         config.activated = true
         await saveConfig()
+        licenseDialog = { ...licenseDialog, open: false }
         return true
     } else {
         return false
