@@ -9,7 +9,7 @@
     import Label from "$lib/components/ui/label/label.svelte"
     import {
         config,
-        isActivationKeyValid,
+        isActivationFailed,
         saveConfig,
         licenseDialog,
         activate
@@ -30,7 +30,7 @@
                 <div class="flex gap-2">
                     <Input
                         type="text"
-                        class={isActivationKeyValid()
+                        class={isActivationFailed()
                             ? ""
                             : "border-warn focus-visible:border-warn focus-visible:outline-warn"}
                         bind:value={config.activation_key}
@@ -46,7 +46,7 @@
                 <div
                     class={cn(
                         "flex gap-2 items-center text-warn text-sm",
-                        isActivationKeyValid() && "opacity-0"
+                        isActivationFailed() && "opacity-0"
                     )}
                 >
                     <TriangleAlert size="16" />
